@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load bootstrap4 %}
+
+<h1>Key in new customer</h1>
+
+<div class="card bg-light border-dark">
+    <div class="card-body">
+
+        <form action="{% url 'core:customer_new' %}" method="post" class="form">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            {% endbuttons %}
+        </form>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extrascripts %}
+{% endblock extrascripts %}

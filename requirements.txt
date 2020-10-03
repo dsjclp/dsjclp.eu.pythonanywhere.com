@@ -1,0 +1,7 @@
+django
+django_plotly_dash
+django-bootstrap4
+dpd-static-support
+pandas
+dash-bootstrap-components
+whitenoise
