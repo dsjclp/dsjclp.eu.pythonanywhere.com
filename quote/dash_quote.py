@@ -33,7 +33,7 @@ app.layout = html.Div(
     [
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.H3('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.H3('Lease quote', className='h2 mb-0 text-gray-800'),
                 dbc.Button("Add manual rents", id="manual-rents-button", outline=True, color="primary"),
             ]
         ),
@@ -50,20 +50,11 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Financed amount", className='font-weight-bold text-primary text-uppercase mb-4'),
-                                                        dcc.Slider(id='amount-slider',min=0,max=1500000,value=100000,step=10000,tooltip='always_visible',className='mb-0 style',     marks={
-                                                            0: {'label': '0', 'style': {'color': '#77b0b1'}},
-                                                            500000: {'label': '500'},
-                                                            1000000: {'label': '1000'}
-                                                        },),
-                                                        html.Div(id='resultamount', className='h4 mt-3 mb-0 font-weight-bold text-gray-600'),
+                                                        html.Div("Amount", className='h4 text-primary text-uppercase mb-4'),
+                                                        dcc.Slider(id='amount-slider',min=0,max=1500000,value=100000,step=10000,className='mb-0 style',),
+                                                        html.Div(id='resultamount', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
-                                                html.Div(className='col-auto',
-                                                    children=[
-                                                        html.Div(className='fas fa-poll fa-2x text-gray-300'),
-                                                    ]
-                                                )
                                             ]
                                         )
                                     ]
@@ -83,16 +74,11 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Residual value", className='font-weight-bold text-primary text-uppercase mb-4'),
-                                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,tooltip='always_visible',className='mb-0'),
-                                                        html.Div(id='resultrv', className='h4 mt-3 mb-0 font-weight-bold text-gray-600'),
+                                                        html.Div("Residual value", className='h4 text-primary text-uppercase mb-4'),
+                                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-0'),
+                                                        html.Div(id='resultrv', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
-                                                html.Div(className='col-auto',
-                                                    children=[
-                                                        html.Div(className='fas fa-poll fa-2x text-gray-300'),
-                                                    ]
-                                                )
                                             ]
                                         )
                                     ]
@@ -112,16 +98,11 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Duration", className='font-weight-bold text-warning text-uppercase mb-4'),
-                                                        dcc.Slider(id='duration-slider',min=0,max=84,value=12,step=1,tooltip='always_visible',className='mb-0'),
-                                                        html.Div(id='resultduration', className='h4 mt-3 mb-0 font-weight-bold text-gray-600'),
+                                                        html.Div("Duration", className='h4 text-warning text-uppercase mb-4'),
+                                                        dcc.Slider(id='duration-slider',min=0,max=84,value=12,step=1,className='mb-0'),
+                                                        html.Div(id='resultduration', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
-                                                html.Div(className='col-auto',
-                                                    children=[
-                                                        html.Div(className='fas fa-clock fa-2x text-gray-300'),
-                                                    ]
-                                                )
                                             ]
                                         )
                                     ]
@@ -141,16 +122,11 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Monthly rent", className='font-weight-bold text-success text-uppercase mb-4'),
+                                                        html.Div("Monthly rent", className='h4 text-success text-uppercase mb-4'),
                                                         dcc.Slider(min=0,max=0,className='mb-0 invisible'),
-                                                        html.Div(id='result', className='h4 mt-3 mb-0 font-weight-bold text-success'),
+                                                        html.Div(id='result', className='h3 mb-0 font-weight-bold text-success'),
                                                     ]
                                                 ),
-                                                html.Div(className='col-auto',
-                                                    children=[
-                                                        html.Div(className='fas fa-calculator fa-2x text-gray-300'),
-                                                    ]
-                                                )
                                             ]
                                         )
                                     ]
@@ -172,7 +148,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
-                                html.H6('Your manual rents', className='m-0 font-weight-bold text-primary'),
+                                html.H4('Your manual rents', className='m-0 font-weight-bold text-primary'),
                             ]
                         ),
                         html.Div(className='card-body', 
@@ -235,7 +211,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H6('Your monthly rents', className='m-0 font-weight-bold text-primary'),
+                                        html.H4('Your monthly rents', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -257,7 +233,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H6('Your schedule', className='m-0 font-weight-bold text-primary'),
+                                        html.H4('Your schedule', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
