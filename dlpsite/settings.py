@@ -26,7 +26,7 @@ SECRET_KEY = 'umr&qtt2a+0q6a#la-rirr-k83e2i5jhk=xw&2s7qp0^6_hs9c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com', '.yarig.fr']
 
 
 # Application definition
@@ -78,7 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dlpsite.wsgi.application'
-ASGI_APPLICATION = 'core.routing.application'
 
 
 # Database
