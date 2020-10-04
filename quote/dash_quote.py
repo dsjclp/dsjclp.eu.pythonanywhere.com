@@ -8,8 +8,11 @@ import pandas as pd
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output, State
 import dash_table.FormatTemplate as FormatTemplate
+from dash_table.Format import Format
 
 import datetime
+from collections import OrderedDict
+from dash_table.Format import Sign
 
 
 app = DjangoDash("QuoteApp")
@@ -27,7 +30,6 @@ card_content_3 = [
         ]
     ),
 ]
-
 
 app.layout = html.Div(
     [
@@ -50,36 +52,12 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Amount", className='h4 text-primary text-uppercase mb-2'),
+                                                        html.Div("Amount", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(id='amount-slider',min=10000,max=500000,value=0,step=10000,className='mb-2', updatemode='drag'),
-                                                        html.Div(id='resultamount', className='h3 mb-0 font-weight-bold text-gray-600', contentEditable=True),
+                                                        html.Div(id='resultamount', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
                                             ]
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
-                    ]
-                ),
-
-                dbc.Col(className='col-xl-3 col-md-12 mb-4',
-                    children=[
-                        html.Div(className='card border-left-primary shadow h-100 py-2',
-                            children=[
-                                html.Div(className='card-body',
-                                    children=[
-                                        html.Div(className='row no-gutters align-items-center',
-                                            children=[
-                                                html.Div(className='col mr-2',
-                                                    children=[
-                                                        html.Div("Residual value", className='h4 text-primary text-uppercase mb-2'),
-                                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag'),
-                                                        html.Div(id='resultrv', className='h3 mb-0 font-weight-bold text-gray-600'),
-                                                    ]
-                                                ),
-                                            ],
                                         )
                                     ]
                                 )
@@ -98,7 +76,31 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Duration", className='h4 text-warning text-uppercase mb-2'),
+                                                        html.Div("Residual value", className='h4 text-secondary text-uppercase mb-2'),
+                                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag'),
+                                                        html.Div(id='resultrv', className='h3 mb-0 font-weight-bold text-gray-600'),
+                                                    ]
+                                                ),
+                                            ],
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                    ]
+                ),
+
+                dbc.Col(className='col-xl-3 col-md-12 mb-4',
+                    children=[
+                        html.Div(className='card border-left-danger shadow h-100 py-2',
+                            children=[
+                                html.Div(className='card-body',
+                                    children=[
+                                        html.Div(className='row no-gutters align-items-center',
+                                            children=[
+                                                html.Div(className='col mr-2',
+                                                    children=[
+                                                        html.Div("Duration", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(id='duration-slider',min=12,max=72,value=0,step=1,className='mb-2',updatemode='drag'),
                                                         html.Div(id='resultduration', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
@@ -122,7 +124,7 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Monthly rent", className='h4 text-success text-uppercase mb-2'),
+                                                        html.Div("Monthly rent", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(min=0,max=0,className='mb-2 invisible'),
                                                         html.Div(id='result', className='h3 mb-0 font-weight-bold text-success'),
                                                     ]
@@ -148,7 +150,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
-                                html.H4('Your manual rents', className='m-0 font-weight-bold text-primary'),
+                                html.H4('Your manual rents', className='m-0 h4 text-primary text-uppercase'),
                             ]
                         ),
                         html.Div(className='card-body', 
@@ -187,6 +189,10 @@ app.layout = html.Div(
                                                 'backgroundColor': 'rgb(248, 248, 248)'
                                             },
                                         ],
+                                        style_table={
+                                                'color': '#858796',
+                                                'font-size': '1.5rem'
+                                                    },
                                         style_header={
                                             'backgroundColor': 'rgb(230, 230, 230)',
                                             'fontWeight': 'bold'
@@ -211,7 +217,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your monthly rents', className='m-0 font-weight-bold text-primary'),
+                                        html.H4('Your monthly rents', className='m-0 h4 text-primary text-uppercase'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -233,7 +239,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your schedule', className='m-0 font-weight-bold text-primary'),
+                                        html.H4('Your schedule', className='m-0 h4 text-primary text-uppercase'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -244,8 +250,8 @@ app.layout = html.Div(
                                                     data=[],
                                                     columns=[
                                                             {'id': 'date', 'name': 'Date', 'type': 'datetime'},
-                                                            {'id': 'rent', 'name': 'Your rent', 'type': 'numeric','format': FormatTemplate.money(0)},
-                                                            {'id': 'crd', 'name': 'Outstanding', 'type': 'numeric'},
+                                                            {'id': 'rent', 'name': 'Rent', 'type': 'numeric', 'format': FormatTemplate.money(0)},
+                                                            {'id': 'crd', 'name': 'Balance', 'type': 'numeric'},
                                                         ],
                                                     page_size=12,
                                                     style_data_conditional=[
@@ -257,6 +263,10 @@ app.layout = html.Div(
                                                     style_header={
                                                         'backgroundColor': 'rgb(230, 230, 230)',
                                                         'fontWeight': 'bold'
+                                                    },
+                                                    style_table={
+                                                        'color': 'green',
+                                                        'font-size': '1.5rem'
                                                     }
                                                 )
                                             ]
@@ -427,7 +437,8 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
         crdfin = int(crd - int(toto))
         crd = crdfin
         rento.append(toto)
-        crdo.append(crd)
+        number_with_commas = "{:,}".format(crd)
+        crdo.append(number_with_commas)
         j=j+1
     #bascule du calendrier de loyers dans la table schedule
     i=0
