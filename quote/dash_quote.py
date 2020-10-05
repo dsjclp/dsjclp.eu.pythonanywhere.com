@@ -42,7 +42,7 @@ app.layout = html.Div(
 
         dbc.Row(
             [
-                dbc.Col(className='col-xl-3 col-md-12 mb-4',
+                dbc.Col(className='col-xl-3 col-lg-6 col-md-12 mb-4',
                     children=[
                         html.Div(className='card border-left-primary shadow h-100 py-2',
                             children=[
@@ -66,7 +66,7 @@ app.layout = html.Div(
                     ]
                 ),
 
-                dbc.Col(className='col-xl-3 col-md-12 mb-4',
+                dbc.Col(className='col-xl-3 col-lg-6 col-md-12 mb-4',
                     children=[
                         html.Div(className='card border-left-warning shadow h-100 py-2',
                             children=[
@@ -90,7 +90,7 @@ app.layout = html.Div(
                     ]
                 ),
 
-                dbc.Col(className='col-xl-3 col-md-12 mb-4',
+                dbc.Col(className='col-xl-3 col-lg-6 col-md-12 mb-4',
                     children=[
                         html.Div(className='card border-left-danger shadow h-100 py-2',
                             children=[
@@ -114,7 +114,7 @@ app.layout = html.Div(
                     ]
                 ),
         
-                dbc.Col(className='col-xl-3 col-md-12 mb-4',
+                dbc.Col(className='col-xl-3 col-lg-6 col-md-12 mb-4',
                     children=[
                         html.Div(className='card border-left-success shadow h-100 py-2',
                             children=[
@@ -182,7 +182,6 @@ app.layout = html.Div(
                                                 'if': {
                                                     'filter_query': '{12} = "N/A"',
                                                 },
-                                                'color': 'red',
                                             },
                                             {
                                                 'if': {'row_index': 'odd'},
@@ -250,8 +249,8 @@ app.layout = html.Div(
                                                     data=[],
                                                     columns=[
                                                             {'id': 'date', 'name': 'Date', 'type': 'datetime'},
-                                                            {'id': 'rent', 'name': 'Rent', 'type': 'numeric', 'format': FormatTemplate.money(0)},
-                                                            {'id': 'crd', 'name': 'Balance', 'type': 'numeric'},
+                                                            {'id': 'rent', 'name': 'Rent', 'type': 'numeric'},
+                                                            {'id': 'crd',  'name': 'Balance', 'type': 'numeric'},
                                                         ],
                                                     page_size=12,
                                                     style_data_conditional=[
@@ -265,7 +264,6 @@ app.layout = html.Div(
                                                         'fontWeight': 'bold'
                                                     },
                                                     style_table={
-                                                        'color': 'green',
                                                         'font-size': '1.5rem'
                                                     }
                                                 )
@@ -405,11 +403,11 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
         #actualisation des values
         val = 0
         if (rent[k] != ''):
-            val = (float)(float(rent[k]) / pow((1+rate),i))
+            val = (float)(float(rent[k]) / pow((1+rate),k))
         #actualisation des coeffts
         coeff = 0
         if (rent[k] == ''):
-            coeff = 1 / pow((1+rate),i)
+            coeff = 1 / pow((1+rate),k)
         #cumul des valeurs actualisées
         npvvalue = npvvalue + val
         npvcoeff = npvcoeff + coeff
