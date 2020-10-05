@@ -53,7 +53,7 @@ app.layout = html.Div(
                                                 html.Div(className='col mr-2',
                                                     children=[
                                                         html.Div("Amount", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(id='amount-slider',min=10000,max=500000,value=0,step=10000,className='mb-2', updatemode='drag'),
+                                                        dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=10000,className='mb-2', updatemode='drag'),
                                                         html.Div(id='resultamount', className='h5 mb-0 font-weight-bold text-gray-800'),
                                                     ]
                                                 ),
@@ -101,7 +101,7 @@ app.layout = html.Div(
                                                 html.Div(className='col mr-2',
                                                     children=[
                                                         html.Div("Duration", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(id='duration-slider',min=12,max=72,value=0,step=1,className='mb-2',updatemode='drag'),
+                                                        dcc.Slider(id='duration-slider',min=24,max=60,value=24,step=3,className='mb-2',updatemode='drag'),
                                                         html.Div(id='resultduration', className='h5 mb-0 font-weight-bold text-gray-800'),
                                                     ]
                                                 ),
