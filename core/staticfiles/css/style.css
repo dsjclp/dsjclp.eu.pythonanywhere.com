@@ -1,17 +1,17 @@
 
 .rc-slider-rail {
-	height: 36px;
+	height: 24px;
 }
 
 .rc-slider-track {
-	height: 36px;
+	height: 24px;
 	background-color: #858796;
 }
 
 
 .rc-slider-handle {
 	background-color: #4e73df;
-	height: 42px;
+	height: 30px;
 	width: 24px;
 	border-radius: 5px;
 	-ms-touch-action: pan-x;

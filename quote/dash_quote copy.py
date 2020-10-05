@@ -35,12 +35,12 @@ app.layout = html.Div(
     [
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Add manual rents", id="manual-rents-button", color="primary")
+                html.H3('Lease quote', className='h2 mb-0 text-gray-800'),
+                dbc.Button("Add manual rents", id="manual-rents-button", color="primary",className=('text-lg')),
             ]
         ),
 
-        dbc.CardGroup(
+        dbc.Row(
             [
                 dbc.Col(className='col-xl-3 col-md-6 mb-4',
                     children=[
@@ -52,9 +52,9 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Amount", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
+                                                        html.Div("Amount", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(id='amount-slider',min=10000,max=500000,value=0,step=10000,className='mb-2', updatemode='drag'),
-                                                        html.Div(id='resultamount', className='h5 mb-0 font-weight-bold text-gray-800'),
+                                                        html.Div(id='resultamount', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
                                             ]
@@ -76,9 +76,9 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Residual value", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
+                                                        html.Div("Residual value", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag'),
-                                                        html.Div(id='resultrv', className='h5 mb-0 font-weight-bold text-gray-800'),
+                                                        html.Div(id='resultrv', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
                                             ],
@@ -92,7 +92,7 @@ app.layout = html.Div(
 
                 dbc.Col(className='col-xl-3 col-md-6 mb-4',
                     children=[
-                        html.Div(className='card border-left-info shadow h-100 py-2',
+                        html.Div(className='card border-left-danger shadow h-100 py-2',
                             children=[
                                 html.Div(className='card-body',
                                     children=[
@@ -100,9 +100,9 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Duration", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
+                                                        html.Div("Duration", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(id='duration-slider',min=12,max=72,value=0,step=1,className='mb-2',updatemode='drag'),
-                                                        html.Div(id='resultduration', className='h5 mb-0 font-weight-bold text-gray-800'),
+                                                        html.Div(id='resultduration', className='h3 mb-0 font-weight-bold text-gray-600'),
                                                     ]
                                                 ),
                                             ]
@@ -124,9 +124,9 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(className='col mr-2',
                                                     children=[
-                                                        html.Div("Monthly rent", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
+                                                        html.Div("Monthly rent", className='h4 text-secondary text-uppercase mb-2'),
                                                         dcc.Slider(min=0,max=0,className='mb-2 invisible'),
-                                                        html.Div(id='result', className='h5 mb-0 font-weight-bold text-gray-800'),
+                                                        html.Div(id='result', className='h3 mb-0 font-weight-bold text-success'),
                                                     ]
                                                 ),
                                             ]
@@ -141,10 +141,10 @@ app.layout = html.Div(
         ),
 
                 
-    dbc.CardGroup(
+    dbc.Row(
         [
 
-            dbc.Col(className='col-xl-12 mb-4',
+            dbc.Col(className='col-md-12',
             children=[
                 html.Div(className='card shadow mb-4',
                     children=[
@@ -208,7 +208,7 @@ app.layout = html.Div(
     id='table-container',),
 
         
-        dbc.CardGroup(
+        dbc.Row(
             [
                  dbc.Col(className='col-xl-8 col-md-12',
                     children=[
@@ -264,7 +264,7 @@ app.layout = html.Div(
                                                         'fontWeight': 'bold'
                                                     },
                                                     style_table={
-                                                        'font-size': '1.2rem'
+                                                        'font-size': '1.5rem'
                                                     }
                                                 )
                                             ]
