@@ -150,7 +150,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
-                                html.H4('Your manual rents', className='m-0 h4 text-primary text-uppercase'),
+                                html.Div('Your manual rents', className='m-0 font-weight-bold text-primary'),
                             ]
                         ),
                         html.Div(className='card-body', 
@@ -216,7 +216,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your monthly rents', className='m-0 h4 text-primary text-uppercase'),
+                                        html.Div('Your monthly rents', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -238,7 +238,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your schedule', className='m-0 h4 text-primary text-uppercase'),
+                                        html.Div('Your schedule', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',

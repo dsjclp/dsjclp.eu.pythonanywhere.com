@@ -36,13 +36,13 @@ app.layout = html.Div(
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Add manual rents", id="manual-rents-button", color="primary")
+                dbc.Button("Add manual rents", id="manual-rents-button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm")
             ]
         ),
 
-        dbc.CardGroup(
-            [
-                dbc.Col(className='col-xl-3 col-md-6 mb-4',
+        dbc.CardGroup(className='container-fluid',
+            children=[
+                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
                     children=[
                         html.Div(className='card border-left-primary shadow h-100 py-2',
                             children=[
@@ -66,7 +66,7 @@ app.layout = html.Div(
                     ]
                 ),
 
-                dbc.Col(className='col-xl-3 col-md-6 mb-4',
+                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
                     children=[
                         html.Div(className='card border-left-warning shadow h-100 py-2',
                             children=[
@@ -90,7 +90,7 @@ app.layout = html.Div(
                     ]
                 ),
 
-                dbc.Col(className='col-xl-3 col-md-6 mb-4',
+                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
                     children=[
                         html.Div(className='card border-left-info shadow h-100 py-2',
                             children=[
@@ -114,7 +114,7 @@ app.layout = html.Div(
                     ]
                 ),
         
-                dbc.Col(className='col-xl-3 col-md-6 mb-4',
+                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
                     children=[
                         html.Div(className='card border-left-success shadow h-100 py-2',
                             children=[
@@ -144,13 +144,13 @@ app.layout = html.Div(
     dbc.CardGroup(
         [
 
-            dbc.Col(className='col-xl-12 mb-4',
+            dbc.Col(className='mb-4',
             children=[
                 html.Div(className='card shadow mb-4',
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
-                                html.H4('Your manual rents', className='m-0 h4 text-primary text-uppercase'),
+                                html.Div('Your manual rents', className='m-0 font-weight-bold text-secondary'),
                             ]
                         ),
                         html.Div(className='card-body', 
@@ -210,13 +210,13 @@ app.layout = html.Div(
         
         dbc.CardGroup(
             [
-                 dbc.Col(className='col-xl-8 col-md-12',
+                 dbc.Col(className='col-sm-12',
                     children=[
                         html.Div(className='card shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your monthly rents', className='m-0 h4 text-primary text-uppercase'),
+                                        html.Div('Your monthly rents', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -232,13 +232,13 @@ app.layout = html.Div(
                         )
                     ]
                 ),
-                dbc.Col(className='col-xl-4 col-md-12',
+                dbc.Col(className='col-sm-12',
                     children=[
                         html.Div(className='card shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.H4('Your schedule', className='m-0 h4 text-primary text-uppercase'),
+                                        html.Div('Your schedule', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
