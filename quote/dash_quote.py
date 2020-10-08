@@ -63,9 +63,11 @@ app.layout = html.Div(
                                                 dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=10000,className='mb-2', updatemode='drag',
                                                     marks={
                                                         10000: {'label': '10K'},
-                                                        25000: {'label': '25K'},
+                                                        20000: {'label': '20K'},
+                                                        40000: {'label': '40K'},
                                                         50000: {'label': '50K'},
-                                                        75000: {'label': '75K'},
+                                                        60000: {'label': '60K'},
+                                                        80000: {'label': '80K'},
                                                         100000: {'label': '100K'}
                                                     },
                                                 ),
@@ -416,8 +418,8 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
     j=0
     for q in rent:
         rentschedule = rentc
-        if isinstance(rent[j], numbers.Number):
-            rentschedule = rent[j]
+        if rent[j] != '':
+            rentschedule = float(rent[j])
         crd = crd - rentschedule
         crd = crd *(1+rate)
         rent_formatted = "{:0,.2f}".format(rentschedule)
@@ -472,17 +474,19 @@ def update_output_duration(input_value):
     [Input('schedule', 'data')])
 def update_graph(rows):
     i=0
-    x = []
-    y = []
+    rentx = []
+    renty = []
+    crdx = []
+    crdy = []
     for row in rows:
-        x.append(i)
-        y.append(row['rent'])
+        rentx.append(i)
+        renty.append(row['rent'])
+        crdx.append(i)
+        crdy.append(row['crd'])
         i=i+1
     return {
-     'data': [{
-          'x': x,
-          'y': y,
-          'type': 'bar',
-          'marker' : { "color" : "#4e73df"}
-    }],
+                'data': [
+                {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
+                {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
+            ],
  }

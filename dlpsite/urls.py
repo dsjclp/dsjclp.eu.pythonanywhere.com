@@ -25,14 +25,7 @@ urlpatterns = [
     path('django_plotly_dash/', include('django_plotly_dash.urls')),
     path('core/', include('core.urls')),
     path('quote/', include('quote.urls')),
-    path('buttons', TemplateView.as_view(template_name='core/buttons.html'), name="buttons"),
-    path('cards', TemplateView.as_view(template_name='core/cards.html'), name="cards"),
-    path('charts', TemplateView.as_view(template_name='core/charts.html'), name="charts"),
-    path('tables', TemplateView.as_view(template_name='core/tables.html'), name="tables"),
-    path('animation', TemplateView.as_view(template_name='core/animation.html'), name="animation"),
-    path('border', TemplateView.as_view(template_name='core/border.html'), name="border"),
-    path('color', TemplateView.as_view(template_name='core/color.html'), name="color"),
-    path('other', TemplateView.as_view(template_name='core/other.html'), name="other"),
+    path('', TemplateView.as_view(template_name='core/home.html'), name="home"),
 ]
 
 # Add in static routes so daphne can serve files; these should
