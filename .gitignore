@@ -1,0 +1,13 @@
+*.pyc
+*~
+/.vscode
+__pycache__
+db.yarig
+static/
+.DS_Store
+media/
+dev.py
+prod.py
+settings.py
+staticfiles/
+manage.py

@@ -14,7 +14,8 @@ import datetime
 from collections import OrderedDict
 from dash_table.Format import Sign
 
-import numbers
+
+from dash_table.Format import Format, Group, Scheme, Symbol
 
 
 app = DjangoDash("QuoteApp")
@@ -155,27 +156,22 @@ app.layout = html.Div(
                                         id='table',
                                         columns=[
                                             {"name": ['Year'], "id": "year"},
-                                            {"name": [datetime.datetime.now().strftime('%b')], "id": "01"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=30)).strftime('%b')], "id": "02"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=61)).strftime('%b')], "id": "03"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=91)).strftime('%b')], "id": "04"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=122)).strftime('%b')], "id": "05"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=152)).strftime('%b')], "id": "06"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=183)).strftime('%b')], "id": "07"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=213)).strftime('%b')], "id": "08"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=244)).strftime('%b')], "id": "09"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=274)).strftime('%b')], "id": "10"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=305)).strftime('%b')], "id": "11"},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=335)).strftime('%b')], "id": "12"},
+                                            {"name": [datetime.datetime.now().strftime('%b')], "id": "01", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=30)).strftime('%b')], "id": "02",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=61)).strftime('%b')], "id": "03",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=91)).strftime('%b')], "id": "04",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=122)).strftime('%b')], "id": "05",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=152)).strftime('%b')], "id": "06", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=183)).strftime('%b')], "id": "07", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=213)).strftime('%b')], "id": "08", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=244)).strftime('%b')], "id": "09", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=274)).strftime('%b')], "id": "10", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=305)).strftime('%b')], "id": "11", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=335)).strftime('%b')], "id": "12", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
                                         ],
                                         data=[],
                                         editable= True,
                                         style_data_conditional=[
-                                            {
-                                                'if': {
-                                                    'filter_query': '{12} = "N/A"',
-                                                },
-                                            },
                                             {
                                                 'if': {'row_index': 'odd'},
                                                 'backgroundColor': 'rgb(248, 248, 248)'
@@ -296,7 +292,7 @@ def create_data(durationvalue, rows):
     d = []
     year = yearref
     for p in range(nblig):
-        d.append([year,'', '', '', '', '', '', '', '', '', '', '', ''])
+        d.append([year,None, None, None, None, None, None, None, None, None, None, None, None])
         year=year+1
     if nblig != durationvalue/12:
         dec = durationvalue - nblig*12
@@ -391,11 +387,11 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
     for p in rent:
         #actualisation des values
         val = 0
-        if (rent[k] != ''):
+        if (rent[k] != None):
             val = (float)(float(rent[k]) / pow((1+rate),k))
         #actualisation des coeffts
         coeff = 0
-        if (rent[k] == ''):
+        if (rent[k] == None):
             coeff = 1 / pow((1+rate),k)
         #cumul des valeurs actualisées
         npvvalue = npvvalue + val
@@ -418,7 +414,7 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
     j=0
     for q in rent:
         rentschedule = rentc
-        if rent[j] != '':
+        if rent[j] != None:
             rentschedule = float(rent[j])
         crd = crd - rentschedule
         crd = crd *(1+rate)
@@ -489,4 +485,4 @@ def update_graph(rows):
                 {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
                 {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
             ],
- }
+    }

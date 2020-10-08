@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import random
+import string
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,11 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'umr&qtt2a+0q6a#la-rirr-k83e2i5jhk=xw&2s7qp0^6_hs9c'
+# Generate an ephemeral key.
+SECRET_KEY = ''.join([random.SystemRandom().choice(string.printable) for i in range(50)])
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.pythonanywhere.com', '.yarig.fr']
 
@@ -113,19 +115,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Paris'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
@@ -152,13 +150,11 @@ PLOTLY_DASH = {
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/staticfiles/'
-# PROD
-#STATIC_ROOT = os.path.join(BASE_DIR, 'core/staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'core/staticfiles')
 
-# DEV
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'core', 'staticfiles'),
-    ]
+#STATICFILES_DIRS = [
+    #os.path.join(BASE_DIR, 'core', 'staticfiles'),
+    #]
     
 
 # Caching - demo uses redis as this is present due to channels use
@@ -194,3 +190,17 @@ PLOTLY_COMPONENTS = [
 
 LOGIN_REDIRECT_URL = '/core/customers'
 LOGOUT_REDIRECT_URL = 'logout'
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_REFERRER_POLICY = 'origin'
+
+SECURE_SSL_REDIRECT = True
+
+SECURE_HSTS_SECONDS = 3600
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+SECURE_HSTS_PRELOAD = True
