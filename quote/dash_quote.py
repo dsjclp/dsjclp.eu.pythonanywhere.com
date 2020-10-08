@@ -14,6 +14,8 @@ import datetime
 from collections import OrderedDict
 from dash_table.Format import Sign
 
+import numbers
+
 
 app = DjangoDash("QuoteApp")
 
@@ -46,7 +48,7 @@ app.layout = html.Div(
             [
                 dbc.Col(className='col-lg-8 col-sm-12',
                     children=[
-                        html.Div(className='card shadow mb-4',
+                        html.Div(className='card border-left-secondary shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -104,7 +106,7 @@ app.layout = html.Div(
 
                 dbc.Col(className='col-lg-4 col-sm-12',
                     children=[
-                        html.Div(className='card card border-left-success shadow mb-4',
+                        html.Div(className='card border-left-success shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -136,7 +138,7 @@ app.layout = html.Div(
 
             dbc.Col(className='mb-4',
             children=[
-                html.Div(className='card shadow mb-4',
+                html.Div(className='card border-bottom-secondary shadow mb-4',
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
@@ -197,7 +199,7 @@ app.layout = html.Div(
             [
                  dbc.Col(className='col-sm-12',
                     children=[
-                        html.Div(className='card shadow mb-4',
+                        html.Div(className='card border-bottom-primary shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -208,7 +210,7 @@ app.layout = html.Div(
                                     children=[
                                         html.Div(
                                             children=[
-                                                        dcc.Graph(id='graph',style={})
+                                                        dcc.Graph(id='graph',style={'color': 'rgb(230, 230, 230)'})
                                             ]
                                         ),
                                     ]
@@ -219,7 +221,7 @@ app.layout = html.Div(
                 ),
                 dbc.Col(className='col-sm-12',
                     children=[
-                        html.Div(className='card shadow mb-4',
+                        html.Div(className='card border-bottom-secondary shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -404,24 +406,24 @@ def clean_data(durationvalue, amountvalue, rvvalue, rows):
     #affichage du loyer principal
     if (npvcoeff != 0) :
         npvfin = npvfin / npvcoeff
-        npvfin = int(npvfin)
+        npvfin = float(npvfin)
     if (npvfin):
-        rentc = str(npvfin)
+        rentc = float(npvfin)
     #remplissage du calendrier de loyers en mémoire
     rento = []
     crdo= []
-    crd = int(amountvalue)
+    crd = amountvalue
     j=0
     for q in rent:
-        toto = rentc
-        if (rent[j] != ''):
-            toto = rent[j]
+        rentschedule = rentc
+        if isinstance(rent[j], numbers.Number):
+            rentschedule = rent[j]
+        crd = crd - rentschedule
         crd = crd *(1+rate)
-        crdfin = int(crd - int(toto))
-        crd = crdfin
-        rento.append(toto)
-        number_with_commas = "{:,}".format(crd)
-        crdo.append(number_with_commas)
+        rent_formatted = "{:0,.2f}".format(rentschedule)
+        rento.append(rent_formatted)
+        crd_formatted = "{:0,.2f}".format(crd)
+        crdo.append(crd_formatted)
         j=j+1
     #bascule du calendrier de loyers dans la table schedule
     i=0
@@ -481,5 +483,6 @@ def update_graph(rows):
           'x': x,
           'y': y,
           'type': 'bar',
+          'marker' : { "color" : "#4e73df"}
     }],
  }
