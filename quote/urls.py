@@ -7,7 +7,10 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 
 # Load demo plotly apps - this triggers their registration
-import quote.dash_quote   # pylint: disable=unused-import
+import quote.dash_quote
+import quote.dash_pr
+
+# pylint: disable=unused-import
 
 from django_plotly_dash.views import add_to_session
 

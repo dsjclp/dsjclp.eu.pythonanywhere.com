@@ -33,6 +33,7 @@ card_content_3 = [
 
 app.layout = html.Div(
     [
+
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
@@ -40,107 +41,96 @@ app.layout = html.Div(
             ]
         ),
 
-        dbc.CardGroup(className='container-fluid',
-            children=[
-                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
+
+        dbc.CardDeck(
+            [
+                dbc.Col(className='col-lg-8 col-sm-12',
                     children=[
-                        html.Div(className='card border-left-primary shadow h-100 py-2',
+                        html.Div(className='card shadow mb-4',
                             children=[
+                                html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
+                                    children=[
+                                        html.Div('Your input', className='m-0 font-weight-bold text-primary'),
+                                    ]
+                                ),
                                 html.Div(className='card-body',
                                     children=[
-                                        html.Div(className='row no-gutters align-items-center',
+                                        html.Div(
                                             children=[
-                                                html.Div(className='col mr-2',
-                                                    children=[
-                                                        html.Div("Amount", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=10000,className='mb-2', updatemode='drag'),
-                                                        html.Div(id='resultamount', className='h5 mb-0 font-weight-bold text-gray-800'),
-                                                    ]
+                                                html.Div("Amount", id='resultamount', className='mb-0 font-weight-bold text-gray-800'),
+                                                dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=10000,className='mb-2', updatemode='drag',
+                                                    marks={
+                                                        10000: {'label': '10K'},
+                                                        25000: {'label': '25K'},
+                                                        50000: {'label': '50K'},
+                                                        75000: {'label': '75K'},
+                                                        100000: {'label': '100K'}
+                                                    },
                                                 ),
                                             ]
-                                        )
+                                        ),
+                                        html.Div(
+                                            children=[
+                                                html.Div(id='resultrv', className='mb-0 font-weight-bold text-gray-800'),
+                                                dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag',
+                                                    marks={
+                                                        00000: {'label': '0K'},
+                                                        10000: {'label': '10K'},
+                                                        20000: {'label': '20K'},
+                                                        30000: {'label': '30K'}
+                                                    }
+                                                ),   
+                                            ]
+                                        ),
+                                        html.Div(
+                                            children=[
+                                                html.Div(id='resultduration', className='mb-0 font-weight-bold text-gray-800'),
+                                                dcc.Slider(id='duration-slider',min=24,max=60,value=24,step=3,className='mb-2',updatemode='drag',
+                                                    marks={
+                                                        24: {'label': '24'},
+                                                        36: {'label': '36'},
+                                                        48: {'label': '48'},
+                                                        60: {'label': '60'}
+                                                    }
+                                                ),      
+                                            ]
+                                        ),
                                     ]
-                                )
+                                ),
                             ]
-                        )
+                        ),
                     ]
                 ),
 
-                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
+                dbc.Col(className='col-lg-4 col-sm-12',
                     children=[
-                        html.Div(className='card border-left-warning shadow h-100 py-2',
+                        html.Div(className='card card border-left-success shadow mb-4',
                             children=[
+                                html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
+                                    children=[
+                                        html.Div('Your monthly rent', className='m-0 font-weight-bold text-primary'),
+                                    ]
+                                ),
                                 html.Div(className='card-body',
                                     children=[
                                         html.Div(className='row no-gutters align-items-center',
                                             children=[
-                                                html.Div(className='col mr-2',
-                                                    children=[
-                                                        html.Div("Residual value", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag'),
-                                                        html.Div(id='resultrv', className='h5 mb-0 font-weight-bold text-gray-800'),
-                                                    ]
-                                                ),
-                                            ],
+                                                html.H2(id='result', className='mb-0 font-weight-bold text-gray-800'),
+                                            ]
                                         )
                                     ]
-                                )
-                            ]
-                        )
-                    ]
-                ),
+                                ),
 
-                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
-                    children=[
-                        html.Div(className='card border-left-info shadow h-100 py-2',
-                            children=[
-                                html.Div(className='card-body',
-                                    children=[
-                                        html.Div(className='row no-gutters align-items-center',
-                                            children=[
-                                                html.Div(className='col mr-2',
-                                                    children=[
-                                                        html.Div("Duration", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(id='duration-slider',min=24,max=60,value=24,step=3,className='mb-2',updatemode='drag'),
-                                                        html.Div(id='resultduration', className='h5 mb-0 font-weight-bold text-gray-800'),
-                                                    ]
-                                                ),
-                                            ]
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
-                    ]
-                ),
-        
-                dbc.Col(className='col-xl-3 col-sm-6 mb-4',
-                    children=[
-                        html.Div(className='card border-left-success shadow h-100 py-2',
-                            children=[
-                                html.Div(className='card-body',
-                                    children=[
-                                        html.Div(className='row no-gutters align-items-center',
-                                            children=[
-                                                html.Div(className='col mr-2',
-                                                    children=[
-                                                        html.Div("Monthly rent", className='text-xs font-weight-bold text-secondary text-uppercase mb-2'),
-                                                        dcc.Slider(min=0,max=0,className='mb-2 invisible'),
-                                                        html.Div(id='result', className='h5 mb-0 font-weight-bold text-gray-800'),
-                                                    ]
-                                                ),
-                                            ]
-                                        )
-                                    ]
-                                )
                             ]
                         )
                     ]
                 ),
             ]
         ),
+        
 
-                
+
+                                           
     dbc.CardGroup(
         [
 
@@ -150,7 +140,7 @@ app.layout = html.Div(
                     children=[
                         html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                             children=[
-                                html.Div('Your manual rents', className='m-0 font-weight-bold text-secondary'),
+                                html.Div('Your manual rents', className='m-0 font-weight-bold text-primary'),
                             ]
                         ),
                         html.Div(className='card-body', 
@@ -159,7 +149,6 @@ app.layout = html.Div(
                                     children=[
                                         dct.DataTable(
                                         id='table',
-                                        css='card border-left-primary shadow h-100 py-2',
                                         columns=[
                                             {"name": ['Year'], "id": "year"},
                                             {"name": [datetime.datetime.now().strftime('%b')], "id": "01"},
@@ -188,10 +177,6 @@ app.layout = html.Div(
                                                 'backgroundColor': 'rgb(248, 248, 248)'
                                             },
                                         ],
-                                        style_table={
-                                                'color': '#858796',
-                                                'font-size': '1.5rem'
-                                                    },
                                         style_header={
                                             'backgroundColor': 'rgb(230, 230, 230)',
                                             'fontWeight': 'bold'
@@ -216,7 +201,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.Div('Your monthly rents', className='m-0 font-weight-bold text-primary'),
+                                        html.Div('Your graph', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -463,21 +448,21 @@ def result(rows):
     [Input(component_id='amount-slider', component_property='value')]
 )
 def update_output_amount(amount_value):
-    return '€ {:,.0f}'.format(amount_value)
+    return 'Financed amount = € {:,.0f}'.format(amount_value)
 
 @app.callback(
     Output(component_id='resultrv', component_property='children'),
     [Input(component_id='rv-slider', component_property='value')]
 )
 def update_output_rv(rv_value):
-    return '€ {:,.0f}'.format(rv_value)
+    return 'Residual value = € {:,.0f}'.format(rv_value)
 
 @app.callback(
     Output(component_id='resultduration', component_property='children'),
     [Input(component_id='duration-slider', component_property='value')]
 )
 def update_output_duration(input_value):
-    return 'Months {}'.format(input_value)
+    return 'Duration = {} months'.format(input_value)
 
 # Production des histogrammes
 @app.callback(
