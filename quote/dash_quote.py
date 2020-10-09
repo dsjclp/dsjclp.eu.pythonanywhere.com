@@ -18,6 +18,8 @@ from dash_table.Format import Sign
 from dash_table.Format import Format, Group, Scheme, Symbol
 
 
+
+
 app = DjangoDash("QuoteApp")
 
 card_content_3 = [
@@ -56,12 +58,22 @@ app.layout = html.Div(
                                         html.Div('Your input', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
+
                                 html.Div(className='card-body',
                                     children=[
-                                        html.Div(
+                                        html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+                                        html.Div(className='input-group mb-3',
                                             children=[
-                                                html.Div("Amount", id='resultamount', className='mb-0 font-weight-bold text-gray-800'),
-                                                dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=10000,className='mb-2', updatemode='drag',
+                                                html.Div(className='input-group-prepend',
+                                                    children=[
+                                                        html.Div('€', className='input-group-text'),
+                                                    ]
+                                                ),
+                                                dcc.Input(id="resultamount", type="text", min=10000, max=100000, step=1000,value=10000, debounce=True, className='form-control'),
+
+                                            ]
+                                        ),
+                                        dcc.Slider(id='amount-slider',min=10000,max=100000,value=10000,step=1000, updatemode='drag',
                                                     marks={
                                                         10000: {'label': '10K'},
                                                         20000: {'label': '20K'},
@@ -71,34 +83,50 @@ app.layout = html.Div(
                                                         80000: {'label': '80K'},
                                                         100000: {'label': '100K'}
                                                     },
+                                                    className='px-1'
                                                 ),
+                                        html.Div('Residual Value amount', className='mb-2 font-weight-bold text-gray-800'),
+                                        html.Div(className='input-group mb-3',
+                                            children=[
+                                                html.Div(className='input-group-prepend',
+                                                    children=[
+                                                        html.Div('€', className='input-group-text'),
+                                                    ]
+                                                ),
+                                                dcc.Input(id="resultrv", type="text", min=0, max=300000, step=1000,value=0, debounce=True, className='form-control'),
+
                                             ]
                                         ),
-                                        html.Div(
+                                        dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,updatemode='drag',
+                                            marks={
+                                                00000: {'label': '0K'},
+                                                10000: {'label': '10K'},
+                                                20000: {'label': '20K'},
+                                                30000: {'label': '30K'}
+                                            },
+                                            className='px-1'
+                                        ), 
+                                        html.Div('Duration', className='mb-2 font-weight-bold text-gray-800'),
+                                        html.Div(className='input-group mb-3',
                                             children=[
-                                                html.Div(id='resultrv', className='mb-0 font-weight-bold text-gray-800'),
-                                                dcc.Slider(id='rv-slider',min=0,max=30000,value=0,step=5000,className='mb-2',updatemode='drag',
-                                                    marks={
-                                                        00000: {'label': '0K'},
-                                                        10000: {'label': '10K'},
-                                                        20000: {'label': '20K'},
-                                                        30000: {'label': '30K'}
-                                                    }
-                                                ),   
+                                                html.Div(className='input-group-prepend',
+                                                    children=[
+                                                        html.Div('Months', className='input-group-text'),
+                                                    ]
+                                                ),
+                                                dcc.Input(id="resultduration", type="text", min=12, max=60, step=1,value=24, debounce=True, className='form-control'),
+
                                             ]
                                         ),
-                                        html.Div(
-                                            children=[
-                                                html.Div(id='resultduration', className='mb-0 font-weight-bold text-gray-800'),
-                                                dcc.Slider(id='duration-slider',min=24,max=60,value=24,step=3,className='mb-2',updatemode='drag',
-                                                    marks={
-                                                        24: {'label': '24'},
-                                                        36: {'label': '36'},
-                                                        48: {'label': '48'},
-                                                        60: {'label': '60'}
-                                                    }
-                                                ),      
-                                            ]
+                                        dcc.Slider(id='duration-slider',min=12,max=60,value=24,step=1,updatemode='drag',
+                                            marks={
+                                                12: {'label': '12'},
+                                                24: {'label': '24'},
+                                                36: {'label': '36'},
+                                                48: {'label': '48'},
+                                                60: {'label': '60'}
+                                            },
+                                            className='px-1'
                                         ),
                                     ]
                                 ),
@@ -180,8 +208,9 @@ app.layout = html.Div(
                                         style_header={
                                             'backgroundColor': 'rgb(230, 230, 230)',
                                             'fontWeight': 'bold'
-                                        }),
-                                        ]
+                                        }
+                                        ),
+                                        ],
                                     ),
                             ]
                         )
@@ -443,26 +472,63 @@ def result(rows):
         a=row['rent']
     return "€ %s" % a
 
+# Affichage du montant : input
 @app.callback(
-    Output(component_id='resultamount', component_property='children'),
+    Output(component_id='resultamount', component_property='value'),
     [Input(component_id='amount-slider', component_property='value')]
 )
-def update_output_amount(amount_value):
-    return 'Financed amount = € {:,.0f}'.format(amount_value)
+def update_output_amount(value):
+    amount_value = value
+    #return "{:0,.2f}".format(amount_value)
+    return amount_value
 
+# ALimentation du montant : slider
 @app.callback(
-    Output(component_id='resultrv', component_property='children'),
+    Output(component_id='amount-slider', component_property='value'),
+    [Input(component_id='resultamount', component_property='value')]
+)
+def update_slider(value):
+    slider_value=int(value)
+    return slider_value
+
+# Alimentation de la VR : input
+@app.callback(
+    Output(component_id='resultrv', component_property='value'),
     [Input(component_id='rv-slider', component_property='value')]
 )
-def update_output_rv(rv_value):
-    return 'Residual value = € {:,.0f}'.format(rv_value)
+def update_output_rv(value):
+    rv_value = value
+    #return "{:0,.2f}".format(rv_value)
+    return rv_value
 
+# Alimentation de la VR : slider
 @app.callback(
-    Output(component_id='resultduration', component_property='children'),
+    Output(component_id='rv-slider', component_property='value'),
+    [Input(component_id='resultrv', component_property='value')]
+)
+def update_slider(value):
+    slider_value=int(value)
+    return slider_value
+
+# Alimentation de la durée : input
+@app.callback(
+    Output(component_id='resultduration', component_property='value'),
     [Input(component_id='duration-slider', component_property='value')]
 )
-def update_output_duration(input_value):
-    return 'Duration = {} months'.format(input_value)
+def update_output_duration(value):
+    duration_value = value
+    #return "{:0,.2f}".format(rv_value)
+    return duration_value
+
+# Alimentation de la durée : slider
+@app.callback(
+    Output(component_id='duration-slider', component_property='value'),
+    [Input(component_id='resultduration', component_property='value')]
+)
+def update_slider(value):
+    slider_value=int(value)
+    return slider_value
+
 
 # Production des histogrammes
 @app.callback(
