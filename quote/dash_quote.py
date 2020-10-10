@@ -252,8 +252,8 @@ app.layout = html.Div(
                                                     data=[],
                                                     columns=[
                                                             {'id': 'date', 'name': 'Date', 'type': 'datetime'},
-                                                            {'id': 'rent', 'name': 'Rent', 'type': 'numeric'},
-                                                            {'id': 'crd',  'name': 'Balance', 'type': 'numeric'},
+                                                            {'id': 'rent', 'name': 'Rent', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                                            {'id': 'crd',  'name': 'Balance', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
                                                         ],
                                                     page_size=12,
                                                     style_data_conditional=[
@@ -484,9 +484,6 @@ def input_update(valueInput, valueSlider):
     
     return dash.no_update
 
-
-
-
 # Masquage de la table des loyers manuels
 @app.callback(
     Output('table-container', 'style'),
@@ -611,11 +608,12 @@ def clean_data(durationValue, amountValue, rvValue, rows):
     for p in rent:
         #actualisation des values
         val = 0
-        if (rent[k] != None):
+        if (rent[k] != None) and str(rent[k]).isnumeric():
             val = (int(rent[k]) / pow((1+rate),k))
         #actualisation des coeffts
         coeff = 0
-        if (rent[k] == None):
+        #if rent[k].isnumeric() == True:
+        if (rent[k] == None) or not str(rent[k]).isnumeric():
             coeff = 1 / pow((1+rate),k)
         #cumul des valeurs actualisées
         npvvalue = npvvalue + val
@@ -642,10 +640,10 @@ def clean_data(durationValue, amountValue, rvValue, rows):
             rentschedule = float(rent[j])
         crd = crd - rentschedule
         crd = crd *(1+rate)
-        rent_formatted = "{:0,.2f}".format(rentschedule)
-        rento.append(rent_formatted)
-        crd_formatted = "{:0,.2f}".format(crd)
-        crdo.append(crd_formatted)
+        #rent_formatted = "{:0,.2f}".format(rentschedule)
+        rento.append(rentschedule)
+        #crd_formatted = "{:0,.2f}".format(crd)
+        crdo.append(crd)
         j=j+1
     #bascule du calendrier de loyers dans la table schedule
     i=0
@@ -660,11 +658,32 @@ def clean_data(durationValue, amountValue, rvValue, rows):
 # Alimentation de la zone résultat
 @app.callback(
     Output('result', 'children'),
-    [Input('schedule', 'data')])
-def result(rows):
+    [Input('schedule', 'data'),
+    Input('table', 'data')])
+def result(scheduleRows, manuals):
     a=0
-    for row in rows:
-        a=row['rent']
+    i=1
+    months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    # calcul du total des loyers manuels
+    manualSum = 0
+    manualNb = 0
+    for manual in manuals:
+        for k in months:
+            if (manual[k] != None) and str(manual[k]).isnumeric():
+                manualSum = manualSum + manual[k]
+                manualNb = manualNb + 1
+    # calcul du total de tous les loyers
+    globalSum = 0
+    globalNb = 0
+    for scheduleRow in scheduleRows:
+        globalSum = globalSum + int(scheduleRow['rent'])
+        globalNb = globalNb + 1
+    
+    # calcul du total des loyers non manuels
+    calcSum = globalSum - manualSum
+    calclNb = globalNb - manualNb
+    # caclul et affichage du loyer non manuel
+    a = float(calcSum/calclNb)
     return "€ %s" % a
 
 # Production des histogrammes
