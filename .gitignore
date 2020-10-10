@@ -9,5 +9,6 @@ media/
 dev.py
 prod.py
 settings.py
+settingsprod.py
 staticfiles/
 manage.py
