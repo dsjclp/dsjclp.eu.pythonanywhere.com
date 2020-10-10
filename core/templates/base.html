@@ -56,83 +56,75 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{%url 'quote:create_quote' %}">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{%url 'home' %}">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-calculator"></i>
         </div>
         <div class="sidebar-brand-text mx-3">Lease solver</div>
       </a>
 
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
 
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-        <a class="nav-link" href="{%url 'home' %}">
-          <i class="fas fa-calculator"></i>
-          <span>By Yarig</span></a>
-      </li>
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+      <a class="nav-link" href="{%url 'home' %}">
+        <i class="fas fa-anchor"></i>
+        <span>By Yarig</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+      Main
+    </div>
+
+
+    <!-- Nav Item - Tables -->
+    <li class="nav-item">
+      <a class="nav-link" href="{%url 'quote:create_quote' %}">
+        <i class="fas fa-calculator"></i>
+        <span>Lease quote</span></a>
+    </li>
+
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+        <i class="fas fa-fw fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Dashboard pages:</h6>
+          <a class="collapse-item" href="{%url 'core:customer_list' %}">Customer List</a>
+          <a class="collapse-item" href="{%url 'core:contract_list' %}">Contract List</a>
+        </div>
+      </div>
+    </li>
 
       <!-- Divider -->
       <hr class="sidebar-divider">
 
       <!-- Heading -->
       <div class="sidebar-heading">
-        Main
+        Access
       </div>
 
-      <!-- Nav Item - Pages Collapse Menu -->
+      <!-- Nav Item - Tables -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-cog"></i>
-          <span>Quotes</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Quotes:</h6>
-            <a class="collapse-item" href="{%url 'quote:create_quote' %}">Lease quote</a>
-          </div>
-        </div>
+        <a class="nav-link" href="{%url 'core:login' %}">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Login</span></a>
       </li>
 
-      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Nav Item - Tables -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-wrench"></i>
-          <span>Dashboard</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Dashboard pages:</h6>
-            <a class="collapse-item" href="{%url 'core:customer_list' %}">Customer List</a>
-            <a class="collapse-item" href="{%url 'core:contract_list' %}">Contract List</a>
-          </div>
-        </div>
+        <a class="nav-link" href="{%url 'core:logout' %}">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span></a>
       </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading -->
-      <div class="sidebar-heading">
-        Login
-      </div>
-
-      <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-          <i class="fas fa-fw fa-folder"></i>
-          <span>Pages</span>
-        </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Login Screen:</h6>
-            <a class="collapse-item" href="{%url 'core:login' %}">Login</a>
-            <a class="collapse-item" href="{%url 'core:logout' %}">Logout</a>
-          </div>
-        </div>
-      </li>
-
 
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
@@ -217,7 +209,7 @@
                   Activity Log
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="{%url 'core:logout' %}" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
                 </a>

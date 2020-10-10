@@ -101,16 +101,18 @@ app.layout = html.Div(
                                                         html.Div('Months', className='input-group-text'),
                                                     ]
                                                 ),
-                                                dcc.Input(id="durationInput", type="text", min=12, max=60, step=1,value=24, debounce=True, className='form-control'),    
+                                                dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=24, debounce=True, className='form-control'),    
                                             ]
                                         ),
-                                        dcc.Slider(id='durationSlider',min=12,max=60,value=24,step=1,updatemode='drag',
+                                        dcc.Slider(id='durationSlider',min=12,max=84,value=24,step=1,updatemode='drag',
                                             marks={
-                                                12: {'label': '12'},
-                                                24: {'label': '24'},
-                                                36: {'label': '36'},
-                                                48: {'label': '48'},
-                                                60: {'label': '60'}
+                                                12: {'label': '12M'},
+                                                24: {'label': '24M'},
+                                                36: {'label': '36M'},
+                                                48: {'label': '48M'},
+                                                60: {'label': '60M'},
+                                                72: {'label': '72M'},
+                                                84: {'label': '84M'}
                                             },
                                             className='px-1'
                                         ),
@@ -305,17 +307,19 @@ def input_update(valueInput, valueSlider):
                             html.Div('Months', className='input-group-text'),
                         ]
                     ),
-                    dcc.Input(id="durationInput", type="text", min=12, max=60, step=1,value=valueSlider, debounce=True, className='form-control'),
+                    dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=valueSlider, debounce=True, className='form-control'),
                 ]
             ),
-            dcc.Slider(id='durationSlider',min=12,max=60,value=valueSlider,step=1,updatemode='drag',
+            dcc.Slider(id='durationSlider',min=12,max=84,value=valueSlider,step=1,updatemode='drag',
                 marks={
-                    12: {'label': '12'},
-                    24: {'label': '24'},
-                    36: {'label': '36'},
-                    48: {'label': '48'},
-                    60: {'label': '60'}
-                },
+                    12: {'label': '12M'},
+                    24: {'label': '24M'},
+                    36: {'label': '36M'},
+                    48: {'label': '48M'},
+                    60: {'label': '60M'},
+                    72: {'label': '72M'},
+                    84: {'label': '84M'}
+    },
                 className='px-1'
             ),
         ]
@@ -330,16 +334,18 @@ def input_update(valueInput, valueSlider):
                             html.Div('Months', className='input-group-text'),
                         ]
                     ),
-                    dcc.Input(id="durationInput", type="text", min=12, max=60, step=1,value=valueInput, debounce=True, className='form-control'),                         
+                    dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=valueInput, debounce=True, className='form-control'),                         
                     ]
             ),
-            dcc.Slider(id='durationSlider',min=12,max=60,value=valueInput,step=1,updatemode='drag',
+            dcc.Slider(id='durationSlider',min=12,max=84,value=valueInput,step=1,updatemode='drag',
                 marks={
-                    12: {'label': '12'},
-                    24: {'label': '24'},
-                    36: {'label': '36'},
-                    48: {'label': '48'},
-                    60: {'label': '60'}
+                    12: {'label': '12M'},
+                    24: {'label': '24M'},
+                    36: {'label': '36M'},
+                    48: {'label': '48M'},
+                    60: {'label': '60M'},
+                    72: {'label': '72M'},
+                    84: {'label': '84M'}
                 },
                 className='px-1'
             ),
