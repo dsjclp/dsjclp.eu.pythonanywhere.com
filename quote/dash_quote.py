@@ -141,7 +141,8 @@ app.layout = html.Div(
                                                 {'label': 'Arrear mode', 'value': '02'}
                                             ],
                                             value='01',
-                                            style={"padding": "10px", "max-width": "800px", "margin": "10px"},
+                                            style={"padding": "auto", "max-width": "800px", "margin": "auto"},
+                                            labelStyle={'display': 'block'}
                                         ),
                                     ]
                                 ),
