@@ -221,7 +221,7 @@ app.layout = html.Div(
             [
                  dbc.Col(className='col-sm-12',
                     children=[
-                        html.Div(className='card border-bottom-primary shadow mb-4',
+                        html.Div(className='card border-left-warning shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -243,7 +243,7 @@ app.layout = html.Div(
                 ),
                 dbc.Col(className='col-sm-12',
                     children=[
-                        html.Div(className='card border-bottom-secondary shadow mb-4',
+                        html.Div(className='card border-left-primary shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
@@ -259,9 +259,10 @@ app.layout = html.Div(
                                                     columns=[
                                                             {'id': 'date', 'name': 'Date', 'type': 'datetime'},
                                                             {'id': 'rent', 'name': 'Rent', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                                            {'id': 'crd',  'name': 'Balance', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                                            {'id': 'balance',  'name': 'Balance', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
                                                         ],
                                                     page_size=12,
+                                                    export_format="csv",
                                                     style_data_conditional=[
                                                         {
                                                             'if': {'row_index': 'odd'},
@@ -696,7 +697,7 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         d.append([(datetime.datetime.now()+ datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
         i=i+1
         j=j+30
-    df= pd.DataFrame(d, columns=["date", "rent", "crd"])
+    df= pd.DataFrame(d, columns=["date", "rent", "balance"])
     return df.to_dict('rows')
 
 # Alimentation de la zone résultat
@@ -743,7 +744,7 @@ def update_graph(rows):
         rentx.append(i)
         renty.append(row['rent'])
         crdx.append(i)
-        crdy.append(row['crd'])
+        crdy.append(row['balance'])
         i=i+1
     return {
                 'data': [
