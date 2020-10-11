@@ -17,9 +17,6 @@ from dash_table.Format import Sign
 
 from dash_table.Format import Format, Group, Scheme, Symbol
 
-import json
-
-
 
 
 app = DjangoDash("QuoteApp")
@@ -135,22 +132,30 @@ app.layout = html.Div(
                                     children=[
                                         html.Div(className='row no-gutters align-items-center',
                                             children=[
-                                                html.H2(id='result', className='mb-0 font-weight-bold text-gray-800'),
+                                                html.H2(id='result', className='mb-2 font-weight-bold text-gray-800'),
                                             ]
-                                        )
+                                        ),
+                                        dcc.RadioItems(id='mode',
+                                            options=[
+                                                {'label': 'Advanced mode', 'value': '01'},
+                                                {'label': 'Arrear mode', 'value': '02'}
+                                            ],
+                                            value='01',
+                                            style={"padding": "10px", "max-width": "800px", "margin": "10px"},
+                                        ),
                                     ]
                                 ),
-
+                            ]
+                        ),
+                        html.Div(className='card-body',
+                            children=[ 
+                                html.Img(src="../staticfiles/img/undraw_posting_photo.svg", className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
                         )
                     ]
                 ),
             ],
         ),
-
-
-
-        
 
                                            
     dbc.CardGroup(
@@ -280,7 +285,6 @@ app.layout = html.Div(
                 )
             ]
         ),
-
     ]
 )
 
@@ -550,9 +554,10 @@ def create_data(durationValue, rows):
         Input('amountSlider', 'value'),
         Input('rvSlider', 'value'),
         Input('table', 'data'),
+        Input('mode', 'value'),
     ]
     )
-def clean_data(durationValue, amountValue, rvValue, rows):
+def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
     #initialisation de la table schedule  du calendrier des loyers
     rent = []
     i=1
@@ -598,6 +603,7 @@ def clean_data(durationValue, amountValue, rvValue, rows):
             rent.append(row['12'])
         j=j+1
         i=i+1
+
     
     #calcul des valeurs actuelles des loyers fixes et des coefficients
     rate = 0.05 /12
@@ -605,46 +611,83 @@ def clean_data(durationValue, amountValue, rvValue, rows):
     npvcoeff = 0
     d = []
     k=0
-    for p in rent:
-        #actualisation des values
-        val = 0
-        if (rent[k] != None) and str(rent[k]).isnumeric():
-            val = (int(rent[k]) / pow((1+rate),k))
-        #actualisation des coeffts
-        coeff = 0
-        #if rent[k].isnumeric() == True:
-        if (rent[k] == None) or not str(rent[k]).isnumeric():
-            coeff = 1 / pow((1+rate),k)
-        #cumul des valeurs actualisées
-        npvvalue = npvvalue + val
-        npvcoeff = npvcoeff + coeff
-        k=k+1
-    #calcul de la valeur actuelle de la vr
-    npvrv = rvvalue / pow((1+rate),durationValue)
-    #calcul du montant des loyers en coefficient
-    npvfin = amountvalue - npvvalue - npvrv
-    #affichage du loyer principal
-    if (npvcoeff != 0) :
-        npvfin = npvfin / npvcoeff
-        npvfin = float(npvfin)
-    if (npvfin):
-        rentc = float(npvfin)
-    #remplissage du calendrier de loyers en mémoire
-    rento = []
-    crdo= []
-    crd = amountvalue
-    j=0
-    for q in rent:
-        rentschedule = rentc
-        if rent[j] != None:
-            rentschedule = float(rent[j])
-        crd = crd - rentschedule
-        crd = crd *(1+rate)
-        #rent_formatted = "{:0,.2f}".format(rentschedule)
-        rento.append(rentschedule)
-        #crd_formatted = "{:0,.2f}".format(crd)
-        crdo.append(crd)
-        j=j+1
+
+    if modeValue=='01':
+        for p in rent:
+            #actualisation des values
+            val = 0
+            if (rent[k] != None) and str(rent[k]).isnumeric():
+                val = (int(rent[k]) / pow((1+rate),k))
+            #actualisation des coeffts
+            coeff = 0
+            if (rent[k] == None) or not str(rent[k]).isnumeric():
+                coeff = 1 / pow((1+rate),k)
+            #cumul des valeurs actualisées
+            npvvalue = npvvalue + val
+            npvcoeff = npvcoeff + coeff
+            k=k+1
+        #calcul de la valeur actuelle de la vr
+        npvrv = rvvalue / pow((1+rate),durationValue)
+        #calcul du montant des loyers en coefficient
+        npvfin = amountvalue - npvvalue - npvrv
+        #affichage du loyer principal
+        if (npvcoeff != 0) :
+            npvfin = npvfin / npvcoeff
+            npvfin = float(npvfin)
+        if (npvfin):
+            rentc = float(npvfin)
+        #remplissage du calendrier de loyers en mémoire
+        rento = []
+        crdo= []
+        crd = amountvalue
+        j=0
+        for q in rent:
+            rentschedule = rentc
+            if rent[j] != None:
+                rentschedule = float(rent[j])
+            crd = crd - rentschedule
+            crd = crd *(1+rate)
+            rento.append(rentschedule)
+            crdo.append(crd)
+            j=j+1
+
+    else:
+        for p in rent:
+            #actualisation des values
+            val = 0
+            if (rent[k] != None) and str(rent[k]).isnumeric():
+                val = (int(rent[k]) / pow((1+rate),k+1))
+            #actualisation des coeffts
+            coeff = 0
+            if (rent[k] == None) or not str(rent[k]).isnumeric():
+                coeff = 1 / pow((1+rate),k+1)
+            #cumul des valeurs actualisées
+            npvvalue = npvvalue + val
+            npvcoeff = npvcoeff + coeff
+            k=k+1
+        #calcul de la valeur actuelle de la vr
+        npvrv = rvvalue / pow((1+rate),durationValue+1)
+        #calcul du montant des loyers en coefficient
+        npvfin = amountvalue - npvvalue - npvrv
+        #affichage du loyer principal
+        if (npvcoeff != 0) :
+            npvfin = npvfin / npvcoeff
+            npvfin = float(npvfin)
+        if (npvfin):
+            rentc = float(npvfin)
+        #remplissage du calendrier de loyers en mémoire
+        rento = []
+        crdo= []
+        crd = amountvalue
+        j=0
+        for q in rent:
+            rentschedule = rentc
+            if rent[j] != None:
+                rentschedule = float(rent[j])
+            crd = crd *(1+rate) - rentschedule
+            rento.append(rentschedule)
+            crdo.append(crd)
+            j=j+1
     #bascule du calendrier de loyers dans la table schedule
     i=0
     j=0
@@ -676,15 +719,14 @@ def result(scheduleRows, manuals):
     globalSum = 0
     globalNb = 0
     for scheduleRow in scheduleRows:
-        globalSum = globalSum + int(scheduleRow['rent'])
+        globalSum = globalSum + float(scheduleRow['rent'])
         globalNb = globalNb + 1
     
     # calcul du total des loyers non manuels
     calcSum = globalSum - manualSum
     calclNb = globalNb - manualNb
-    # caclul et affichage du loyer non manuel
-    a = float(calcSum/calclNb)
-    return "€ %s" % a
+    # calcul et affichage du loyer non manuel
+    return "€ {:0,.1f}".format(float(calcSum/calclNb))
 
 # Production des histogrammes
 @app.callback(
