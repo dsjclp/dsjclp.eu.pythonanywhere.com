@@ -646,7 +646,7 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         for q in rent:
             rentschedule = rentc
             if rent[j] != None:
-                rentschedule = float(rent[j])
+                rentschedule = rent[j]
             crd = crd - rentschedule
             crd = crd *(1+rate)
             rento.append(rentschedule)
@@ -668,7 +668,7 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
             npvcoeff = npvcoeff + coeff
             k=k+1
         #calcul de la valeur actuelle de la vr
-        npvrv = rvvalue / pow((1+rate),durationValue+1)
+        npvrv = rvvalue / pow((1+rate),durationValue)
         #calcul du montant des loyers en coefficient
         npvfin = amountvalue - npvvalue - npvrv
         #affichage du loyer principal
@@ -685,14 +685,16 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         for q in rent:
             rentschedule = rentc
             if rent[j] != None:
-                rentschedule = float(rent[j])
-            crd = crd *(1+rate) - rentschedule
+                rentschedule = rent[j]
+            crd = crd *(1+rate) - rentschedule  
             rento.append(rentschedule)
             crdo.append(crd)
             j=j+1
     #bascule du calendrier de loyers dans la table schedule
     i=0
     j=0
+    if (modeValue!='01') :
+        j=30
     for p in rent:
         d.append([(datetime.datetime.now()+ datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
         i=i+1
@@ -749,6 +751,17 @@ def update_graph(rows):
     return {
                 'data': [
                 {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
-                {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
-            ],
+                {'x': crdx, 'y': crdy, 'type': 'bar', 'yaxis': 'yaxis2', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
+            ],  
+            'layout': {
+                    'title': f'Trend by Date',
+                    'showlegend': True,
+                    'xaxis': {'title': 'Months',
+                              'showline': True},
+                    'yaxis': {'title': 'trend1',
+                              'showline': True},
+                    'yaxis2': {'title': 'trend2',
+                               'side': 'right',
+                               'showline': True}
+                    },
     }
