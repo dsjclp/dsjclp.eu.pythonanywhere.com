@@ -6,16 +6,30 @@
 
 {%block content%}
 
-  <!-- Page Heading -->
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Welcome to Lease Solver !</h1>
- </div>
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Welcome !</h1>
+           </div>
 
-  <a href="{%url 'quote:create_quote' %}"" class="btn btn-secondary btn-icon-split mb-4 btn-lg">
-    <span class="icon text-white-50">
-      <i class="fas fa-arrow-right"></i>
-    </span>
-    <span class="text">Access quotes</span>
-  </a>
+          <!-- Content Row -->
+          <div class="row">
+            <div class="col s12 m12 l12">
+                                        <!-- Brand Buttons -->
+                                        <div class="card shadow mb-4">
+                                          <div class="card-header py-3">
+                                            <h6 class="m-0 font-weight-bold text-primary">Lease calculation principles</h6>
+                                          </div>
+                                          <div class="card-body px-4">
+                                            <p>From a calculation perspective, Leases and Loans are similar.</p>
+                                            <p>You can search for a rent/setllement amount, starting with a financed amount value : <a href="{%url 'quote:create_quote' %}">"Direct quote"</a>.
+                                              <p>You can search for a financed amount, starting with a monthly rent value :  <a href="{%url 'quote:create_reverse' %}">"Reverse quote"</a>.
+                                                <hr>
+                                            <a href="{%url 'quote:create_quote' %}" class="btn btn-primary btn-block"><i class="fas fa-calculator"></i> Direct quote</a>
+                                            <a href="{%url 'quote:create_reverse' %}" class="btn btn-secondary btn-block"><i class="fas fa-calculator"></i> Reverse quote</a>
+                                          </div>
+                                        </div>
+            </div>
+          </div>
+
      
 {% endblock %}

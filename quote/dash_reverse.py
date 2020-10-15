@@ -18,15 +18,16 @@ from dash_table.Format import Sign
 from dash_table.Format import Format, Group, Scheme, Symbol
 
 
-app = DjangoDash("QuoteApp")
+app = DjangoDash("ReverseApp")
+
 
 app.layout = html.Div(
     [
 
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Add manual rents", id="manual-rents-button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm")
+                html.Div('Lease reverse quote', className='h3 mb-0 text-gray-800'),
+                dbc.Button("Adjust rents", id="manual-rents-button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm")
             ]
         ),
 
@@ -38,7 +39,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-body',id='wrapper_amount',
                                     children=[
-                                        html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+                                        html.Div('Monthly rent amount', className='mb-2 font-weight-bold text-gray-800'),
                                         html.Div(className='input-group mb-3',
                                             children=[
                                                 html.Div(className='input-group-prepend',
@@ -46,18 +47,15 @@ app.layout = html.Div(
                                                         html.Div('€', className='input-group-text'),
                                                     ]
                                                 ),
-                                                dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=10000, debounce=True, className='form-control'),    
+                                                dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value=1000, debounce=True, className='form-control'),    
                                             ]
                                         ),
-                                        dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
+                                        dcc.Slider(id='amountSlider',min=100,max=10000,value=1000,step=100,updatemode='drag',
                                             marks={
-                                                10000: {'label': '10K'},
-                                                20000: {'label': '20K'},
-                                                40000: {'label': '40K'},
-                                                50000: {'label': '50K'},
-                                                60000: {'label': '60K'},
-                                                80000: {'label': '80K'},
-                                                100000: {'label': '100K'}
+                                                100: {'label': '100€'},
+                                                1000: {'label': '1000€'},
+                                                5000: {'label': '5000€'},
+                                                10000: {'label': '10000€'},
                                             },
                                             className='px-1'
                                         ),
@@ -124,7 +122,7 @@ app.layout = html.Div(
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        html.Div('Your monthly rent', className='m-0 font-weight-bold text-primary'),
+                                        html.Div('Your financed amount', className='m-0 font-weight-bold text-primary'),
                                     ]
                                 ),
                                 html.Div(className='card-body',
@@ -426,6 +424,8 @@ def input_update(valueInput, valueSlider):
     Output('wrapper_amount', 'children'),
     [Input('amountInput', 'value'), Input('amountSlider', "value")]
 )
+
+
 def input_update(valueInput, valueSlider):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -435,7 +435,7 @@ def input_update(valueInput, valueSlider):
 
     if trigger_id == "amountSlider.value":
         return [
-            html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+            html.Div('Monthly rent amount', className='mb-2 font-weight-bold text-gray-800'),
             html.Div(className='input-group mb-3',
                 children=[
                     html.Div(className='input-group-prepend',
@@ -443,18 +443,15 @@ def input_update(valueInput, valueSlider):
                             html.Div('€', className='input-group-text'),
                         ]
                     ),
-                    dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value="{:0,.2f}".format(valueSlider), debounce=True, className='form-control'),    
+                    dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value="{:0,.2f}".format(valueSlider), debounce=True, className='form-control'),    
                 ]
             ),
-            dcc.Slider(id='amountSlider',min=10000,max=100000,value=valueSlider,step=1000,updatemode='drag',
+            dcc.Slider(id='amountSlider',min=100,max=10000,value=valueSlider,step=100,updatemode='drag',
                 marks={
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    40000: {'label': '40K'},
-                    50000: {'label': '50K'},
-                    60000: {'label': '60K'},
-                    80000: {'label': '80K'},
-                    100000: {'label': '100K'}
+                                                100: {'label': '100€'},
+                                                1000: {'label': '1000€'},
+                                                5000: {'label': '5000€'},
+                                                10000: {'label': '10000€'},
                 },
                 className='px-1'
             ),
@@ -462,7 +459,7 @@ def input_update(valueInput, valueSlider):
     
     if trigger_id == "amountInput.value":
         return [
-            html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+            html.Div('Rent amount', className='mb-2 font-weight-bold text-gray-800'),
             html.Div(className='input-group mb-3',
                 children=[
                     html.Div(className='input-group-prepend',
@@ -470,24 +467,23 @@ def input_update(valueInput, valueSlider):
                             html.Div('€', className='input-group-text'),
                         ]
                     ),
-                    dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value="{:0,.2f}".format(int(valueInput)), debounce=True, className='form-control'),    
+                    dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value="{:0,.2f}".format(int(valueInput)), debounce=True, className='form-control'),    
                 ]
             ),
-            dcc.Slider(id='amountSlider',min=10000,max=100000,value=int(valueInput),step=1000,updatemode='drag',
+            dcc.Slider(id='amountSlider',min=100,max=10000,value=int(valueInput),step=100,updatemode='drag',
                 marks={
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    40000: {'label': '40K'},
-                    50000: {'label': '50K'},
-                    60000: {'label': '60K'},
-                    80000: {'label': '80K'},
-                    100000: {'label': '100K'}
+                                                100: {'label': '100€'},
+                                                1000: {'label': '1000€'},
+                                                5000: {'label': '5000€'},
+                                                10000: {'label': '10000€'},
                 },
                 className='px-1'
             ),
         ]
     
     return dash.no_update
+
+
 
 # Masquage de la table des loyers manuels
 @app.callback(
@@ -547,7 +543,7 @@ def create_data(durationValue, rows):
     return df.to_dict('rows')
 
 
-# Calcul du loyer inconnu et création du calendrier de loyers
+# Calcul du montant à financer et création du calendrier de loyers
 @app.callback(
     Output('schedule', 'data'),
     [
@@ -606,7 +602,7 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         i=i+1
 
     
-    #calcul des valeurs actuelles des loyers fixes et des coefficients
+    #calcul des valeurs actuelles des loyers
     rate = 0.05 /12
     npvvalue = 0
     npvcoeff = 0
@@ -615,35 +611,31 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
 
     if modeValue=='01':
         for p in rent:
-            #actualisation des values
+            #actualisation des valeurs ajustées
             val = 0
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k))
-            #actualisation des coeffts
+            #actualisation des valeurs normales
             coeff = 0
             if (rent[k] == None) or not str(rent[k]).isnumeric():
-                coeff = 1 / pow((1+rate),k)
+                coeff = amountValue / pow((1+rate),k)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
         #calcul de la valeur actuelle de la vr
         npvrv = rvvalue / pow((1+rate),durationValue)
-        #calcul du montant des loyers en coefficient
-        npvfin = amountvalue - npvvalue - npvrv
-        #affichage du loyer principal
-        if (npvcoeff != 0) :
-            npvfin = npvfin / npvcoeff
-            npvfin = float(npvfin)
-        if (npvfin):
-            rentc = float(npvfin)
+        #calcul du montant total actualisé
+        financedValue = npvvalue + npvcoeff + npvrv
+        
+
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
-        crd = amountvalue
+        crd = financedValue
         j=0
         for q in rent:
-            rentschedule = rentc
+            rentschedule = amountValue
             if rent[j] != None:
                 rentschedule = rent[j]
             crd = crd - rentschedule
@@ -654,35 +646,31 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
 
     else:
         for p in rent:
-            #actualisation des values
+            #actualisation des valeurs ajustées
             val = 0
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k+1))
-            #actualisation des coeffts
+            #actualisation des valeurs normales
             coeff = 0
             if (rent[k] == None) or not str(rent[k]).isnumeric():
-                coeff = 1 / pow((1+rate),k+1)
+                coeff = amountValue / pow((1+rate),k+1)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
         #calcul de la valeur actuelle de la vr
         npvrv = rvvalue / pow((1+rate),durationValue)
-        #calcul du montant des loyers en coefficient
-        npvfin = amountvalue - npvvalue - npvrv
-        #affichage du loyer principal
-        if (npvcoeff != 0) :
-            npvfin = npvfin / npvcoeff
-            npvfin = float(npvfin)
-        if (npvfin):
-            rentc = float(npvfin)
+        #calcul du montant total actualisé
+        financedValue = npvvalue + npvcoeff + npvrv
+
+
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
-        crd = amountvalue
+        crd = financedValue
         j=0
         for q in rent:
-            rentschedule = rentc
+            rentschedule = amountValue
             if rent[j] != None:
                 rentschedule = rent[j]
             crd = crd *(1+rate) - rentschedule  
@@ -705,31 +693,25 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
 @app.callback(
     Output('result', 'children'),
     [Input('schedule', 'data'),
-    Input('table', 'data')])
-def result(scheduleRows, manuals):
-    a=0
-    i=1
-    months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
-    # calcul du total des loyers manuels
-    manualSum = 0
-    manualNb = 0
-    for manual in manuals:
-        for k in months:
-            if (manual[k] != None) and str(manual[k]).isnumeric():
-                manualSum = manualSum + manual[k]
-                manualNb = manualNb + 1
-    # calcul du total de tous les loyers
-    globalSum = 0
-    globalNb = 0
-    for scheduleRow in scheduleRows:
-        globalSum = globalSum + float(scheduleRow['rent'])
-        globalNb = globalNb + 1
-    
-    # calcul du total des loyers non manuels
-    calcSum = globalSum - manualSum
-    calclNb = globalNb - manualNb
-    # calcul et affichage du loyer non manuel
-    return "€ {:0,.1f}".format(float(calcSum/calclNb))
+    Input('mode', 'value'),
+    Input('rvSlider', 'value'),])
+def result(scheduleRows, modeValue, rvValue):
+    val = 0
+    k = 0
+    rate = 0.05 /12
+    if modeValue=='01':
+        for scheduleRow in scheduleRows:
+            val = val + (float(scheduleRow['rent'] / pow((1+rate),k)))
+            k=k+1
+        val = val + rvValue / pow((1+rate),k)
+    else :
+        for scheduleRow in scheduleRows:
+            val = val + (float(scheduleRow['rent'] / pow((1+rate),k+1)))
+            k=k+1
+        val = val + rvValue / pow((1+rate),k)
+
+    # affichage du montant à financer
+    return '€ {:0,.1f}'.format(val)
 
 # Production des histogrammes
 @app.callback(

@@ -7,8 +7,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 
 # Load demo plotly apps - this triggers their registration
-import quote.dash_quote
-import quote.dash_pr
+import quote.dash_quote, quote.dash_reverse, quote.dash_pr
 
 # pylint: disable=unused-import
 
@@ -22,7 +21,8 @@ from django.conf.urls.static import static
 app_name = 'quote'
 
 urlpatterns = [
-    path("create", views.create_quote, name='create_quote'),
+    path("direct", views.create_quote, name='create_quote'),
+    path("reverse", views.create_reverse, name='create_reverse'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

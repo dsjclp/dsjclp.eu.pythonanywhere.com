@@ -33,3 +33,28 @@ def create_quote(request):
         'scheduleform': scheduleform,
         'formset': formset,
     })
+
+def create_reverse(request):
+    template_name = 'quote/create_reverse.html'
+    if request.method == 'GET':
+        scheduleform = ScheduleModelForm(request.GET or None)
+        formset = StepFormset(queryset=Step.objects.none())
+    elif request.method == 'POST':
+        scheduleform = ScheduleModelForm(request.POST)
+        formset = StepFormset(request.POST)
+        if scheduleform.is_valid() and formset.is_valid():
+            schedule = scheduleform.save(commit=False)
+            schedule.user=request.user
+            schedule = scheduleform.save()
+            i=1
+            for form in formset:
+                step = form.save(commit=False)
+                step.schedule = schedule
+                step.rank = i
+                step.save()
+                i=i+1
+            return redirect('home')
+    return render(request, template_name, {
+        'scheduleform': scheduleform,
+        'formset': formset,
+    })
