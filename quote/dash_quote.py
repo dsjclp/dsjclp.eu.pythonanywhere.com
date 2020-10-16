@@ -4,25 +4,20 @@ import dash_core_components as dcc
 import dash_table as dct
 import dash_html_components as html
 import pandas as pd
-
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output, State
-import dash_table.FormatTemplate as FormatTemplate
-from dash_table.Format import Format
-
-import datetime
-from collections import OrderedDict
-from dash_table.Format import Sign
-
-
 from dash_table.Format import Format, Group, Scheme, Symbol
 
+import datetime
+from dateutil.relativedelta import relativedelta
+
+
+startdate = datetime.datetime.now()
 
 app = DjangoDash("QuoteApp")
 
 app.layout = html.Div(
-    [
-
+    [      
         html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
@@ -51,13 +46,7 @@ app.layout = html.Div(
                                         ),
                                         dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
                                             marks={
-                                                10000: {'label': '10K'},
-                                                20000: {'label': '20K'},
-                                                40000: {'label': '40K'},
-                                                50000: {'label': '50K'},
-                                                60000: {'label': '60K'},
-                                                80000: {'label': '80K'},
-                                                100000: {'label': '100K'}
+                                                10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
                                             },
                                             className='px-1'
                                         ),
@@ -78,10 +67,7 @@ app.layout = html.Div(
                                         ),
                                         dcc.Slider(id='rvSlider',min=0,max=30000,value=0,step=1000,updatemode='drag',
                                             marks={
-                                                00000: {'label': '0K'},
-                                                10000: {'label': '10K'},
-                                                20000: {'label': '20K'},
-                                                30000: {'label': '30K'}
+                                                00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
                                             },
                                             className='px-1'
                                         ),
@@ -102,13 +88,7 @@ app.layout = html.Div(
                                         ),
                                         dcc.Slider(id='durationSlider',min=12,max=84,value=24,step=1,updatemode='drag',
                                             marks={
-                                                12: {'label': '12M'},
-                                                24: {'label': '24M'},
-                                                36: {'label': '36M'},
-                                                48: {'label': '48M'},
-                                                60: {'label': '60M'},
-                                                72: {'label': '72M'},
-                                                84: {'label': '84M'}
+                                                12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
                                             },
                                             className='px-1'
                                         ),
@@ -143,6 +123,14 @@ app.layout = html.Div(
                                             style={"padding": "auto", "max-width": "800px", "margin": "auto"},
                                             labelStyle={'display': 'block'}
                                         ),
+                                        html.Div('Annual rate to be used', className='font-weight-bold text-primary'),
+                                        dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
+                                            marks={
+                                                0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
+                                            },
+                                            tooltip = 'always_visible',
+                                            className='px-1'
+                                        ),
                                     ]
                                 ),
                             ]
@@ -156,69 +144,55 @@ app.layout = html.Div(
                 ),
             ],
         ),
-
-                                           
-    dbc.CardGroup(
-        [
-
-            dbc.Col(className='mb-4',
-            children=[
-                html.Div(className='card border-bottom-secondary shadow mb-4',
+                                
+        dbc.CardGroup(
+            [
+                dbc.Col(className='mb-4',
                     children=[
-                        html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
+                        html.Div(className='card border-bottom-secondary shadow mb-4',
                             children=[
-                                html.Div('Your manual rents', className='m-0 font-weight-bold text-primary'),
-                            ]
-                        ),
-                        html.Div(className='card-body', 
-                            children=[
-                                html.Div(
+                                html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
-                                        dct.DataTable(
-                                        id='table',
-                                        columns=[
-                                            {"name": ['Year'], "id": "year"},
-                                            {"name": [datetime.datetime.now().strftime('%b')], "id": "01", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=30)).strftime('%b')], "id": "02",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=61)).strftime('%b')], "id": "03",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=91)).strftime('%b')], "id": "04",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=122)).strftime('%b')], "id": "05",'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=152)).strftime('%b')], "id": "06", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=183)).strftime('%b')], "id": "07", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=213)).strftime('%b')], "id": "08", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=244)).strftime('%b')], "id": "09", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=274)).strftime('%b')], "id": "10", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=305)).strftime('%b')], "id": "11", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                            {"name": [(datetime.datetime.now()+ datetime.timedelta(days=335)).strftime('%b')], "id": "12", 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                        ],
-                                        data=[],
-                                        editable= True,
-                                        style_data_conditional=[
-                                            {
-                                                'if': {'row_index': 'odd'},
-                                                'backgroundColor': 'rgb(248, 248, 248)'
-                                            },
-                                        ],
-                                        style_header={
-                                            'backgroundColor': 'rgb(230, 230, 230)',
-                                            'fontWeight': 'bold'
-                                        }
+                                        html.Div('Your manual rents', className='m-0 font-weight-bold text-primary'),
+                                    ]
+                                ),
+                                html.Div(className='card-body', 
+                                    children=[
+                                        html.Div(
+                                            children=[
+                                                dct.DataTable(
+                                                    id='manual_rents',
+                                                    columns=(
+                                                        [{'name': ['Starting'], 'id': 'year'}] +
+                                                        [{'name': [(startdate + relativedelta(months=i)).strftime('%b')], 'id': str(i+1), 'type': 'numeric',
+                                                            'format': Format(scheme=Scheme.fixed, precision=0,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')}
+                                                            for i in range (12)
+                                                        ]
+                                                    ),
+                                                    data=[],
+                                                    editable= True,
+                                                    style_data_conditional=[
+                                                        {'if': {'row_index': 'odd'},'backgroundColor': 'rgb(248, 248, 248)'}
+                                                    ],
+                                                    style_header={
+                                                        'backgroundColor': 'rgb(230, 230, 230)','fontWeight': 'bold'
+                                                    }
+                                                ),
+                                            ],
                                         ),
-                                        ],
-                                    ),
+                                    ]
+                                )
                             ]
                         )
                     ]
-                )
-            ]
+                ),
+            ],
+            id='table-container',
         ),
-    ],
-    id='table-container',),
 
-        
         dbc.CardGroup(
             [
-                 dbc.Col(className='col-sm-12',
+                dbc.Col(className='col-sm-12',
                     children=[
                         html.Div(className='card border-left-warning shadow mb-4',
                             children=[
@@ -231,7 +205,29 @@ app.layout = html.Div(
                                     children=[
                                         html.Div(
                                             children=[
-                                                        dcc.Graph(id='graph',style={'color': 'rgb(230, 230, 230)'})
+                                                dcc.Graph(id='graph',style={'color': 'rgb(230, 230, 230)'},
+                                                    figure={
+                                                    'layout': {
+                                                        'title': f'Trend by Date',
+                                                        'showlegend': True,
+                                                        'legend': {'x': 0,
+                                                                    'y': 1,
+
+                                                                    'traceorder': 'normal',
+                                                                    'bgcolor': 'rgba(200, 200, 200, 0.4)'
+                                                                    },
+                                                        'xaxis': {'title': 'Date',
+                                                                    'showline': True},
+                                                        'yaxis': {'title': 'trend1',
+                                                                    'side': 'left',
+                                                                    'showline': True},
+                                                        'yaxis2': {'title': 'trend2',
+                                                                    'tickformat': '%d %B (%a)<br>%Y',
+                                                                    'side': 'right',
+                                                                    'showline': True}
+                                                        },
+                                                    },
+                                                )
                                             ]
                                         ),
                                     ]
@@ -240,6 +236,7 @@ app.layout = html.Div(
                         )
                     ]
                 ),
+
                 dbc.Col(className='col-sm-12',
                     children=[
                         html.Div(className='card border-left-primary shadow mb-4',
@@ -272,9 +269,7 @@ app.layout = html.Div(
                                                         'backgroundColor': 'rgb(230, 230, 230)',
                                                         'fontWeight': 'bold'
                                                     },
-                                                    style_table={
-                                                        'font-size': '1.2rem'
-                                                    }
+                                                    style_table={'font-size': '1.2rem'}
                                                 )
                                             ]
                                         )
@@ -289,13 +284,96 @@ app.layout = html.Div(
     ]
 )
 
+# Mise à jour alignée des zones input et slider pour amount
+@app.callback(
+    Output('wrapper_amount', 'children'),
+    [Input('amountInput', 'value'), Input('amountSlider', "value")]
+)
+def amount_update(valueInput, valueSlider):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        trigger_id = "amountSlider.value"
+    else:
+        trigger_id = ctx.triggered[0]['prop_id']
+    
+    if trigger_id == "amountSlider.value":
+        valueForinput = valueSlider
+        valueForslider = valueSlider
+    
+    if trigger_id == "amountInput.value":
+        valueForinput = int(valueInput)
+        valueForslider = int(valueInput)
 
-#callback de mise à jour de la durée
+    return [
+        html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+        html.Div(className='input-group mb-3',
+            children=[
+                html.Div(className='input-group-prepend',
+                    children=[
+                        html.Div('€', className='input-group-text'),
+                    ]
+                ),
+                dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value="{:0,.2f}".format(valueForinput), debounce=True, className='form-control'),    
+            ]
+        ),
+        dcc.Slider(id='amountSlider',min=10000,max=100000,value=valueForslider,step=1000,updatemode='drag',
+            marks={
+                10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
+            },
+            className='px-1'
+        ),
+    ]
+    
+    return dash.no_update
+
+# Mise à jour alignée des zones input et slider pour RV
+@app.callback(
+    Output('wrapper_rv', 'children'),
+    [Input('rvInput', 'value'), Input('rvSlider', "value")]
+)
+def rv_update(valueInput, valueSlider):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        trigger_id = "rvSlider.value"
+    else:
+        trigger_id = ctx.triggered[0]['prop_id']
+    
+    if trigger_id == "rvSlider.value":
+        valueForinput = valueSlider
+        valueForslider = valueSlider
+    
+    if trigger_id == "rvInput.value":
+        valueForinput = int(valueInput)
+        valueForslider = int(valueInput)
+
+    return [
+        html.Div('Residual value', className='mb-2 font-weight-bold text-gray-800'),
+        html.Div(className='input-group mb-3',
+            children=[
+                html.Div(className='input-group-prepend',
+                    children=[
+                        html.Div('€', className='input-group-text'),
+                    ]
+                ),
+                dcc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value="{:0,.2f}".format(valueForinput), debounce=True, className='form-control'),    
+            ]
+        ),
+        dcc.Slider(id='rvSlider',min=0,max=30000,value=valueForslider,step=1000,updatemode='drag',
+            marks={
+                00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
+            },
+            className='px-1'
+        ),
+    ]
+    
+    return dash.no_update
+
+# Mise à jour alignée des zones input et slider pour duration
 @app.callback(
     Output('wrapper_duration', 'children'),
     [Input('durationInput', 'value'), Input('durationSlider', "value")]
 )
-def input_update(valueInput, valueSlider):
+def duration_update(valueInput, valueSlider):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "durationSlider.value"
@@ -303,193 +381,37 @@ def input_update(valueInput, valueSlider):
         trigger_id = ctx.triggered[0]['prop_id']
 
     if trigger_id == "durationSlider.value":
-        return [
-            html.Div('Duration', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('Months', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=valueSlider, debounce=True, className='form-control'),
-                ]
-            ),
-            dcc.Slider(id='durationSlider',min=12,max=84,value=valueSlider,step=1,updatemode='drag',
-                marks={
-                    12: {'label': '12M'},
-                    24: {'label': '24M'},
-                    36: {'label': '36M'},
-                    48: {'label': '48M'},
-                    60: {'label': '60M'},
-                    72: {'label': '72M'},
-                    84: {'label': '84M'}
-    },
-                className='px-1'
-            ),
-        ]
+        valueForinput = valueSlider
+        valueForslider = valueSlider
     
     if trigger_id == "durationInput.value":
-        return [
-            html.Div('Duration', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('Months', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=valueInput, debounce=True, className='form-control'),                         
+        valueForinput = valueInput
+        valueForslider = valueInput
+
+    return [
+        html.Div('Duration', className='mb-2 font-weight-bold text-gray-800'),
+        html.Div(className='input-group mb-3',
+            children=[
+                html.Div(className='input-group-prepend',
+                    children=[
+                        html.Div('Months', className='input-group-text'),
                     ]
-            ),
-            dcc.Slider(id='durationSlider',min=12,max=84,value=valueInput,step=1,updatemode='drag',
-                marks={
-                    12: {'label': '12M'},
-                    24: {'label': '24M'},
-                    36: {'label': '36M'},
-                    48: {'label': '48M'},
-                    60: {'label': '60M'},
-                    72: {'label': '72M'},
-                    84: {'label': '84M'}
-                },
-                className='px-1'
-            ),
-        ]
+                ),
+                dcc.Input(id="durationInput", type="text", min=12, max=84, step=1,value=valueForinput, debounce=True, className='form-control'),
+            ]
+        ),
+        dcc.Slider(id='durationSlider',min=12,max=84,value=valueForslider,step=1,updatemode='drag',
+            marks={
+                12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
+            },
+            className='px-1'
+        ),
+    ]
     
     return dash.no_update
 
 
-#callback de mise à jour de la VR
-@app.callback(
-    Output('wrapper_rv', 'children'),
-    [Input('rvInput', 'value'), Input('rvSlider', "value")]
-)
-def input_update(valueInput, valueSlider):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        trigger_id = "rvSlider.value"
-    else:
-        trigger_id = ctx.triggered[0]['prop_id']
-
-    if trigger_id == "rvSlider.value":
-        return [
-            html.Div('Residual value', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('€', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value="{:0,.2f}".format(valueSlider), debounce=True, className='form-control'),    
-                ]
-            ),
-            dcc.Slider(id='rvSlider',min=0,max=30000,value=valueSlider,step=1000,updatemode='drag',
-                marks={
-                    00000: {'label': '0K'},
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    30000: {'label': '30K'}
-                },
-                className='px-1'
-            ),
-        ]
-    
-    if trigger_id == "rvInput.value":
-        return [
-            html.Div('Residual value', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('€', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value="{:0,.2f}".format(int(valueInput)), debounce=True, className='form-control'),    
-                ]
-            ),
-            dcc.Slider(id='rvSlider',min=0,max=30000,value=int(valueInput),step=1000,updatemode='drag',
-                marks={
-                    00000: {'label': '0K'},
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    30000: {'label': '30K'}
-                },
-                className='px-1'
-            ),
-        ]
-    
-    return dash.no_update
-
-#callback de mise à jour du montant
-@app.callback(
-    Output('wrapper_amount', 'children'),
-    [Input('amountInput', 'value'), Input('amountSlider', "value")]
-)
-def input_update(valueInput, valueSlider):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        trigger_id = "amountSlider.value"
-    else:
-        trigger_id = ctx.triggered[0]['prop_id']
-
-    if trigger_id == "amountSlider.value":
-        return [
-            html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('€', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value="{:0,.2f}".format(valueSlider), debounce=True, className='form-control'),    
-                ]
-            ),
-            dcc.Slider(id='amountSlider',min=10000,max=100000,value=valueSlider,step=1000,updatemode='drag',
-                marks={
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    40000: {'label': '40K'},
-                    50000: {'label': '50K'},
-                    60000: {'label': '60K'},
-                    80000: {'label': '80K'},
-                    100000: {'label': '100K'}
-                },
-                className='px-1'
-            ),
-        ]
-    
-    if trigger_id == "amountInput.value":
-        return [
-            html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
-            html.Div(className='input-group mb-3',
-                children=[
-                    html.Div(className='input-group-prepend',
-                        children=[
-                            html.Div('€', className='input-group-text'),
-                        ]
-                    ),
-                    dcc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value="{:0,.2f}".format(int(valueInput)), debounce=True, className='form-control'),    
-                ]
-            ),
-            dcc.Slider(id='amountSlider',min=10000,max=100000,value=int(valueInput),step=1000,updatemode='drag',
-                marks={
-                    10000: {'label': '10K'},
-                    20000: {'label': '20K'},
-                    40000: {'label': '40K'},
-                    50000: {'label': '50K'},
-                    60000: {'label': '60K'},
-                    80000: {'label': '80K'},
-                    100000: {'label': '100K'}
-                },
-                className='px-1'
-            ),
-        ]
-    
-    return dash.no_update
-
-# Masquage de la table des loyers manuels
+# Démasquage des loyers manuels
 @app.callback(
     Output('table-container', 'style'),
     [Input('manual-rents-button', 'n_clicks')])
@@ -500,18 +422,17 @@ def on_button_click(n):
         return {'display': 'block'}
 
 
-# Remplissage de la Table des loyers manuels
+# Alimentation des loyers manuels en fonction de la durée choisie
 @app.callback(
-    Output('table', 'data'),
+    Output('manual_rents', 'data'),
     [Input('durationSlider', 'value'),],
-    [State('table', 'data')]
+    [State('manual_rents', 'data')]
     )
-def create_data(durationValue, rows):
+def create_manual(durationValue, rows):
     yearref = datetime.datetime.now().year
     durationvalue = int(durationValue)
-    # Calcul du nombre de lignes de la table des loyers fixes (1 par tranche de 12 mois de la durée choisie ... +1)
+    # Calcul du nombre de lignes de la table des loyers manuels : 1 par tranche de 12 mois de la durée choisie ... +1
     nblig = int(durationvalue/12)
-    # Remplissage
     d = []
     year = yearref
     for p in range(nblig):
@@ -519,31 +440,17 @@ def create_data(durationValue, rows):
         year=year+1
     if nblig != durationvalue/12:
         dec = durationvalue - nblig*12
-        if dec ==1:
-            d.append([year, None, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==2:
-            d.append([year,None, None, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==3:
-            d.append([year,None, None, None, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==4:
-            d.append([year,None, None, None, None, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==5:
-            d.append([year,None, None, None, None, None, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==6:
-            d.append([year,None, None, None, None, None, None, 'N/A','N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==7:
-            d.append([year,None, None, None, None, None, None, None, 'N/A','N/A', 'N/A', 'N/A', 'N/A'])
-        elif dec ==8:
-            d.append([year,None, None, None, None, None, None, None, None, 'N/A','N/A', 'N/A', 'N/A'])
-        elif dec ==9:
-            d.append([year,None, None, None, None, None, None, None, None, None, 'N/A','N/A', 'N/A'])
-        elif dec ==10:
-            d.append([year,None, None, None, None, None, None, None, None, None, None, 'N/A','N/A'])
-        elif dec ==11:
-            d.append([year,None, None, None, None, None, None, None, None, None, None, None, None])
-        else :
-            d.append(['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
-    df= pd.DataFrame(d, columns=['year',"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"])
+        d.append([year,None, None, None, None, None, None, None, None, None, None, None, None])  
+    df= pd.DataFrame(d, columns=['year',"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"])
+    #blocage des saisies au delà de la durée
+    if nblig != durationvalue/12:
+        dec = durationvalue - nblig*12
+        for y in range(nblig+1):
+            if y==nblig:
+                for x in range(12, dec, -1):
+                    df[str(x)][y]= 'N/A'
+            y=y+1
+
     return df.to_dict('rows')
 
 
@@ -554,65 +461,31 @@ def create_data(durationValue, rows):
         Input('durationSlider', 'value'),
         Input('amountSlider', 'value'),
         Input('rvSlider', 'value'),
-        Input('table', 'data'),
+        Input('manual_rents', 'data'),
         Input('mode', 'value'),
+        Input('rateSlider', 'value'),
     ]
     )
-def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
-    #initialisation de la table schedule  du calendrier des loyers
+def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue):
     rent = []
-    i=1
     j=1
     amountvalue = int(amountValue)
     rvvalue = int(rvValue)
     durationValue = int(durationValue)
     for row in rows:
-        if(j<= durationValue): 
-            rent.append(row['01'])
-        j=j+1
-        if(j<= durationValue):  
-            rent.append(row['02'])
-        j=j+1
-        if(j<= durationValue):  
-            rent.append(row['03'])
-        j=j+1
-        if(j<= durationValue): 
-            rent.append(row['04'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['05'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['06'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['07'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['08'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['09'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['10'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['11'])
-        j=j+1
-        if(j<= durationValue):
-            rent.append(row['12'])
-        j=j+1
-        i=i+1
+        for k in range(1,13):
+            if(j<= durationValue): 
+                rent.append(row[str(k)])
+            j=j+1
 
-    
     #calcul des valeurs actuelles des loyers fixes et des coefficients
-    rate = 0.05 /12
+    rate = rateValue/120000
     npvvalue = 0
     npvcoeff = 0
     d = []
     k=0
 
+    # en mode advance
     if modeValue=='01':
         for p in rent:
             #actualisation des values
@@ -631,19 +504,15 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         npvrv = rvvalue / pow((1+rate),durationValue)
         #calcul du montant des loyers en coefficient
         npvfin = amountvalue - npvvalue - npvrv
-        #affichage du loyer principal
-        if (npvcoeff != 0) :
-            npvfin = npvfin / npvcoeff
-            npvfin = float(npvfin)
-        if (npvfin):
-            rentc = float(npvfin)
+        #calcul du loyer principal
+        rent_calculated = float(npvfin / npvcoeff)
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
         crd = amountvalue
         j=0
         for q in rent:
-            rentschedule = rentc
+            rentschedule = rent_calculated
             if rent[j] != None:
                 rentschedule = rent[j]
             crd = crd - rentschedule
@@ -652,6 +521,7 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
             crdo.append(crd)
             j=j+1
 
+    # en mode arrear
     else:
         for p in rent:
             #actualisation des values
@@ -670,34 +540,33 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
         npvrv = rvvalue / pow((1+rate),durationValue)
         #calcul du montant des loyers en coefficient
         npvfin = amountvalue - npvvalue - npvrv
-        #affichage du loyer principal
-        if (npvcoeff != 0) :
-            npvfin = npvfin / npvcoeff
-            npvfin = float(npvfin)
-        if (npvfin):
-            rentc = float(npvfin)
+        #calcul du loyer principal
+        rent_calculated = float(npvfin / npvcoeff)
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
         crd = amountvalue
         j=0
         for q in rent:
-            rentschedule = rentc
+            rentschedule = rent_calculated
             if rent[j] != None:
                 rentschedule = rent[j]
             crd = crd *(1+rate) - rentschedule  
             rento.append(rentschedule)
             crdo.append(crd)
             j=j+1
-    #bascule du calendrier de loyers dans la table schedule
+
+# Alimentation de la table schedule
     i=0
-    j=0
+    if (modeValue=='01') :
+        for p in rent:
+            d.append([(startdate + relativedelta(months=i)).strftime('%b %Y'), rento[i], crdo[i]])
+            i=i+1
     if (modeValue!='01') :
-        j=30
-    for p in rent:
-        d.append([(datetime.datetime.now()+ datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
-        i=i+1
-        j=j+30
+        for p in rent:
+            d.append([(startdate + relativedelta(months=i+1)).strftime('%b %Y'), rento[i], crdo[i]])
+            i=i+1
+
     df= pd.DataFrame(d, columns=["date", "rent", "balance"])
     return df.to_dict('rows')
 
@@ -705,11 +574,11 @@ def clean_data(durationValue, amountValue, rvValue, rows, modeValue):
 @app.callback(
     Output('result', 'children'),
     [Input('schedule', 'data'),
-    Input('table', 'data')])
+    Input('manual_rents', 'data')])
 def result(scheduleRows, manuals):
     a=0
     i=1
-    months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     # calcul du total des loyers manuels
     manualSum = 0
     manualNb = 0
@@ -731,7 +600,7 @@ def result(scheduleRows, manuals):
     # calcul et affichage du loyer non manuel
     return "€ {:0,.1f}".format(float(calcSum/calclNb))
 
-# Production des histogrammes
+# Alimentation du graphique
 @app.callback(
     Output('graph', 'figure'),
     [Input('schedule', 'data')])
@@ -752,16 +621,4 @@ def update_graph(rows):
                 {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
                 {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
             ],  
-            'layout': {
-                    'title': f'Trend by Date',
-                    'showlegend': True,
-                    'xaxis': {'title': 'Months2',
-                              'showline': True},
-                    'yaxis': {'title': 'trend1',
-                              'showline': True},
-                    'yaxis2': {'title': 'trend2',
-                               'side': 'right',
-                               'showline': True,
-                               'overlaying': 'y'}
-                    },
     }
