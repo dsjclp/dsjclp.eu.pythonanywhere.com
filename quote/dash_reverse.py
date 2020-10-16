@@ -44,7 +44,7 @@ app.layout = html.Div(
                                                 dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value=10000, debounce=True, className='form-control'),    
                                             ]
                                         ),
-                                        dcc.Slider(id='amountSlider',min=100,max=10000,value=1000,step=100,updatemode='drag',
+                                        dcc.Slider(id='amountSlider',min=100,max=10000,value=2000,step=100,updatemode='drag',
                                             marks={100: {'label': '100€'},2000: {'label': '2000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
                                             },
                                             className='px-1'
@@ -485,14 +485,13 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     # en mode advance
     if modeValue=='01':
         for p in rent:
-            #actualisation des valeurs ajustées
+            #actualisation
             val = 0
-            if (rent[k] != None) and str(rent[k]).isnumeric():
-                val = (int(rent[k]) / pow((1+rate),k))
-            #actualisation des valeurs normales
             coeff = 0
-            if (rent[k] == None) or not str(rent[k]).isnumeric():
-                coeff = amountValue / pow((1+rate),k)
+            if rent[k] != None and str(rent[k]).isnumeric():
+                val = (int(rent[k]) / pow((1+rate),k))
+            else:
+                coeff = 1 / pow((1+rate),k)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
@@ -501,7 +500,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         npvrv = rvvalue / pow((1+rate),durationValue)
         #calcul du montant total actualisé
         financedValue = npvvalue + npvcoeff + npvrv
-
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
@@ -509,25 +507,23 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         j=0
         for q in rent:
             rentschedule = amountValue
-            if rent[j] != None:
+            if rent[j] != None and str(rent[j]).isnumeric():
                 rentschedule = rent[j]
             crd = crd - rentschedule
             crd = crd *(1+rate)
             rento.append(rentschedule)
             crdo.append(crd)
             j=j+1
-   
     # en mode arrear
     else:
         for p in rent:
-            #actualisation des valeurs ajustées
+            #actualisation
             val = 0
+            coeff = 0
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k+1))
-            #actualisation des valeurs normales
-            coeff = 0
-            if (rent[k] == None) or not str(rent[k]).isnumeric():
-                coeff = amountValue / pow((1+rate),k+1)
+            else:
+                coeff = 1 / pow((1+rate),k+1)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
@@ -536,7 +532,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         npvrv = rvvalue / pow((1+rate),durationValue)
         #calcul du montant total actualisé
         financedValue = npvvalue + npvcoeff + npvrv
-
         #remplissage du calendrier de loyers en mémoire
         rento = []
         crdo= []
@@ -544,7 +539,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         j=0
         for q in rent:
             rentschedule = amountValue
-            if rent[j] != None:
+            if rent[j] != None and str(rent[j]).isnumeric():
                 rentschedule = rent[j]
             crd = crd *(1+rate) - rentschedule  
             rento.append(rentschedule)
@@ -556,7 +551,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     if (modeValue!='01') :
         j=30
     for p in rent:
-        d.append([(datetime.datetime.now()+ datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
+        d.append([(startdate + datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
         i=i+1
         j=j+30
     df= pd.DataFrame(d, columns=["date", "rent", "balance"])
@@ -612,5 +607,5 @@ def update_graph(rows):
                 'data': [
                 {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
                 {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
-            ],  
+            ],
     }

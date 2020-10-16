@@ -10,9 +10,41 @@ from dash_table.Format import Format, Group, Scheme, Symbol
 
 import datetime
 from dateutil.relativedelta import relativedelta
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+
 
 
 startdate = datetime.datetime.now()
+
+
+# Create figure with secondary y-axis
+fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+# Add traces
+fig.add_trace(
+    go.Scatter(x=[1, 2, 3], y=[40, 50, 60], name="yaxis data"),
+    secondary_y=False,
+)
+
+fig.add_trace(
+    go.Scatter(x=[2, 3, 4], y=[4, 5, 6], name="yaxis2 data"),
+    secondary_y=True,
+)
+
+# Add figure title
+fig.update_layout(
+    title_text="Double Y Axis Example"
+)
+
+# Set x-axis title
+fig.update_xaxes(title_text="xaxis title")
+
+# Set y-axes titles
+fig.update_yaxes(title_text="<b>primary</b> yaxis title", secondary_y=False)
+fig.update_yaxes(title_text="<b>secondary</b> yaxis title", secondary_y=True)
+    
 
 app = DjangoDash("QuoteApp")
 
@@ -205,29 +237,7 @@ app.layout = html.Div(
                                     children=[
                                         html.Div(
                                             children=[
-                                                dcc.Graph(id='graph',style={'color': 'rgb(230, 230, 230)'},
-                                                    figure={
-                                                    'layout': {
-                                                        'title': f'Trend by Date',
-                                                        'showlegend': True,
-                                                        'legend': {'x': 0,
-                                                                    'y': 1,
-
-                                                                    'traceorder': 'normal',
-                                                                    'bgcolor': 'rgba(200, 200, 200, 0.4)'
-                                                                    },
-                                                        'xaxis': {'title': 'Date',
-                                                                    'showline': True},
-                                                        'yaxis': {'title': 'trend1',
-                                                                    'side': 'left',
-                                                                    'showline': True},
-                                                        'yaxis2': {'title': 'trend2',
-                                                                    'tickformat': '%d %B (%a)<br>%Y',
-                                                                    'side': 'right',
-                                                                    'showline': True}
-                                                        },
-                                                    },
-                                                )
+                                                dcc.Graph(id='graph',figure=fig)
                                             ]
                                         ),
                                     ]
@@ -467,6 +477,7 @@ def create_manual(durationValue, rows):
     ]
     )
 def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue):
+
     rent = []
     j=1
     amountvalue = int(amountValue)
@@ -488,13 +499,12 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     # en mode advance
     if modeValue=='01':
         for p in rent:
-            #actualisation des values
+            #actualisation
             val = 0
-            if (rent[k] != None) and str(rent[k]).isnumeric():
-                val = (int(rent[k]) / pow((1+rate),k))
-            #actualisation des coeffts
             coeff = 0
-            if (rent[k] == None) or not str(rent[k]).isnumeric():
+            if rent[k] != None and str(rent[k]).isnumeric():
+                val = (int(rent[k]) / pow((1+rate),k))
+            else:
                 coeff = 1 / pow((1+rate),k)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
@@ -513,7 +523,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         j=0
         for q in rent:
             rentschedule = rent_calculated
-            if rent[j] != None:
+            if rent[j] != None and str(rent[j]).isnumeric():
                 rentschedule = rent[j]
             crd = crd - rentschedule
             crd = crd *(1+rate)
@@ -524,13 +534,12 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     # en mode arrear
     else:
         for p in rent:
-            #actualisation des values
+            #actualisation
             val = 0
+            coeff = 0
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k+1))
-            #actualisation des coeffts
-            coeff = 0
-            if (rent[k] == None) or not str(rent[k]).isnumeric():
+            else:
                 coeff = 1 / pow((1+rate),k+1)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
@@ -549,7 +558,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         j=0
         for q in rent:
             rentschedule = rent_calculated
-            if rent[j] != None:
+            if rent[j] != None and str(rent[j]).isnumeric():
                 rentschedule = rent[j]
             crd = crd *(1+rate) - rentschedule  
             rento.append(rentschedule)
@@ -616,9 +625,32 @@ def update_graph(rows):
         crdx.append(i)
         crdy.append(row['balance'])
         i=i+1
-    return {
-                'data': [
-                {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
-                {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
-            ],  
-    }
+    
+
+    # Create figure with secondary y-axis
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    # Add traces
+    fig.add_trace(
+        go.Scatter(x=crdx, y=crdy, name="yaxis data"),
+        secondary_y=False,
+    )
+
+    fig.add_trace(
+        go.Scatter(x=rentx, y=renty, name="yaxis2 data"),
+        secondary_y=True,
+    )
+
+    # Add figure title
+    fig.update_layout(
+        title_text="Double Y Axis Example"
+    )
+
+    # Set x-axis title
+    fig.update_xaxes(title_text="xaxis title")
+
+    # Set y-axes titles
+    fig.update_yaxes(title_text="<b>primary</b> yaxis title", secondary_y=False)
+    fig.update_yaxes(title_text="<b>secondary</b> yaxis title", secondary_y=True)
+    
+    return fig
