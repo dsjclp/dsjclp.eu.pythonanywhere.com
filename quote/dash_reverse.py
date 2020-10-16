@@ -45,7 +45,7 @@ app.layout = html.Div(
                                             ]
                                         ),
                                         dcc.Slider(id='amountSlider',min=100,max=10000,value=1000,step=100,updatemode='drag',
-                                            marks={100: {'label': '100€'},1000: {'label': '1000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
+                                            marks={100: {'label': '100€'},2000: {'label': '2000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
                                             },
                                             className='px-1'
                                         ),
@@ -304,7 +304,7 @@ def amount_update(valueInput, valueSlider):
         valueForslider = int(valueInput)
 
     return [
-        html.Div('Financed amount', className='mb-2 font-weight-bold text-gray-800'),
+        html.Div('Rent amount', className='mb-2 font-weight-bold text-gray-800'),
         html.Div(className='input-group mb-3',
             children=[
                 html.Div(className='input-group-prepend',
@@ -316,7 +316,7 @@ def amount_update(valueInput, valueSlider):
             ]
         ),
         dcc.Slider(id='amountSlider',min=100,max=10000,value=valueForslider,step=100,updatemode='drag',
-            marks={100: {'label': '100€'},1000: {'label': '1000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
+            marks={100: {'label': '100€'},2000: {'label': '2000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
             },
             className='px-1'
         ),
