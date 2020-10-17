@@ -142,7 +142,7 @@ app.layout = html.Div(
                         ),
                         html.Div(className='card-body',
                             children=[ 
-                                html.Img(src="../staticfiles/toto.jpg", className='img-fluid px-3 px-sm-4 mt-3 mb-4')
+                                html.Img(src="../staticfiles/img/undraw_posting_photo.svg", className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
                         )
                     ]
