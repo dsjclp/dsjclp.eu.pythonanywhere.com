@@ -10,9 +10,14 @@ from dash_table.Format import Format, Group, Scheme, Symbol
 
 import datetime
 from dateutil.relativedelta import relativedelta
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 startdate = datetime.datetime.now()
+
+# Create figure with secondary y-axis
+fig = make_subplots(specs=[[{"secondary_y": True}]])
 
 app = DjangoDash("ReverseApp")
 
@@ -598,14 +603,32 @@ def update_graph(rows):
     crdx = []
     crdy = []
     for row in rows:
-        rentx.append(i)
-        renty.append(row['rent'])
-        crdx.append(i)
+        crdx.append(row['date'])
         crdy.append(row['balance'])
+        rentx.append(row['date'])
+        renty.append(row['rent'])
         i=i+1
-    return {
-                'data': [
-                {'x': rentx, 'y': renty, 'type': 'bar', 'name': 'rent', 'marker' : { "color" : "#4e73df"}},
-                {'x': crdx, 'y': crdy, 'type': 'bar', 'name': 'balance', 'marker' : { "color" : "#f6c23e"}}
-            ],
-    }
+    
+    # Create figure with secondary y-axis
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    # Add traces
+    fig.add_trace(
+        go.Scatter(x=crdx, y=crdy, name="Balance", marker_color='#f6c23e', mode='markers'),
+        secondary_y=True,
+    )
+    fig.add_trace(
+        go.Bar(x=rentx, y=renty, name="Rent", marker_color='#4e73df'),
+        secondary_y=False,
+    )
+
+    # Add figure 
+    fig.update_layout(
+        title_text="Balance and rent amounts"
+    )
+
+    # Set y-axes titles
+    fig.update_yaxes(title_text="<b>Balance</b>", secondary_y=True)
+    fig.update_yaxes(title_text="<b>Rent</b>", secondary_y=False)
+
+    return fig
