@@ -496,7 +496,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             if rent[k] != None and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k))
             else:
-                coeff = 1 / pow((1+rate),k)
+                coeff = amountValue / pow((1+rate),k)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
@@ -528,7 +528,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k+1))
             else:
-                coeff = 1 / pow((1+rate),k+1)
+                coeff = amountValue / pow((1+rate),k+1)
             #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
@@ -550,18 +550,20 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             rento.append(rentschedule)
             crdo.append(crd)
             j=j+1
-    #bascule du calendrier de loyers dans la table schedule
+
+# Alimentation de la table schedule
     i=0
-    j=0
+    if (modeValue=='01') :
+        for p in rent:
+            d.append([(startdate + relativedelta(months=i)).strftime('%b %Y'), rento[i], crdo[i]])
+            i=i+1
     if (modeValue!='01') :
-        j=30
-    for p in rent:
-        d.append([(startdate + datetime.timedelta(days=j)).strftime('%b %Y'), rento[i], crdo[i]])
-        i=i+1
-        j=j+30
+        for p in rent:
+            d.append([(startdate + relativedelta(months=i+1)).strftime('%b %Y'), rento[i], crdo[i]])
+            i=i+1
+
     df= pd.DataFrame(d, columns=["date", "rent", "balance"])
     return df.to_dict('rows')
-
 
 
 # Alimentation de la zone résultat
