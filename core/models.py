@@ -44,3 +44,29 @@ class Contract(models.Model):
     def __str__(self):
         return str(self.id)
 
+class Schedule(models.Model):
+    amount = models.FloatField()
+    rv = models.FloatField()
+    ADVANCED = 'Advanced'
+    ARREAR = 'Arrear'
+    MODE_CHOICES = [
+        (ADVANCED, 'Advanced'),
+        (ARREAR, 'Arrear'),
+    ]
+    start_date = models.DateField(null=True, blank=True)
+    mode = models.CharField(max_length=9,
+        choices=MODE_CHOICES,
+        default=ADVANCED,)
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Step(models.Model):
+    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)
+    rent = models.FloatField()
+    balance = models.FloatField()
+    date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return str(self.id)

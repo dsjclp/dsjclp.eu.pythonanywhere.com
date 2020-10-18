@@ -13,6 +13,10 @@ from dateutil.relativedelta import relativedelta
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from core.models import Contract
+from core.models import Schedule
+from core.models import Step
+
 
 startdate = datetime.datetime.now()
 
@@ -22,11 +26,11 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 app = DjangoDash("QuoteApp")
 
 app.layout = html.Div(
-    [      
-        html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
+    [    
+        html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Add manual rents", id="manual-rents-button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm")
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
             ]
         ),
 
@@ -114,27 +118,34 @@ app.layout = html.Div(
                                 ),
                                 html.Div(className='card-body',
                                     children=[
-                                        html.Div(className='row no-gutters align-items-center',
-                                            children=[
-                                                html.H2(id='result', className='mb-2 font-weight-bold text-gray-800'),
-                                            ]
-                                        ),
-                                        dcc.RadioItems(id='mode',
-                                            options=[
-                                                {'label': 'Advanced mode', 'value': '01'},
-                                                {'label': 'Arrear mode', 'value': '02'}
-                                            ],
-                                            value='01',
-                                            style={"padding": "auto", "max-width": "800px", "margin": "auto"},
-                                            labelStyle={'display': 'block'}
-                                        ),
-                                        html.Div('Annual rate to be used', className='font-weight-bold text-primary'),
+                                        html.Div('Annual rate', className='font-weight-bold text-primary'),
                                         dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
                                             marks={
                                                 0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
                                             },
                                             tooltip = 'always_visible',
-                                            className='px-1'
+                                            className='px-1 mb-2'
+                                        ),
+                                        html.Div(className='row no-gutters align-items-center',
+                                            children=[
+                                                html.H4(id='result', className='font-weight-bold text-gray-800'),
+                                            ]
+                                        ),
+                                        dbc.RadioItems(id='mode', className = 'mb-2 radioitems',
+                                            options=[
+                                                {'label': 'Advanced mode', 'value': '01'},
+                                                {'label': 'Arrear mode', 'value': '03'}
+                                            ],
+                                            value='01',
+                                            inline=True,
+                                        ),
+                                        dbc.RadioItems(id='manual',
+                                            options=[
+                                                {'label': 'No manual rent', 'value': '02'},
+                                                {'label': 'W/ manual rent', 'value': '01'}
+                                            ],
+                                            value='02',
+                                            inline=True,
                                         ),
                                     ]
                                 ),
@@ -268,11 +279,11 @@ app.layout = html.Div(
 )
 
 # Mise à jour alignée des zones input et slider pour amount
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_amount', 'children'),
     [Input('amountInput', 'value'), Input('amountSlider', "value")]
 )
-def amount_update(valueInput, valueSlider):
+def amount_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "amountSlider.value"
@@ -310,11 +321,11 @@ def amount_update(valueInput, valueSlider):
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour RV
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_rv', 'children'),
     [Input('rvInput', 'value'), Input('rvSlider', "value")]
 )
-def rv_update(valueInput, valueSlider):
+def rv_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "rvSlider.value"
@@ -352,11 +363,11 @@ def rv_update(valueInput, valueSlider):
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour duration
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_duration', 'children'),
     [Input('durationInput', 'value'), Input('durationSlider', "value")]
 )
-def duration_update(valueInput, valueSlider):
+def duration_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "durationSlider.value"
@@ -395,23 +406,24 @@ def duration_update(valueInput, valueSlider):
 
 
 # Démasquage des loyers manuels
-@app.callback(
+@app.expanded_callback(
     Output('table-container', 'style'),
-    [Input('manual-rents-button', 'n_clicks')])
-def on_button_click(n):
-    if n is None:
+    [Input('manual', 'value')])
+def show_manual(manualValue, **kwargs):
+    if manualValue !='01':
         return {'display': 'none'}
     else:
         return {'display': 'block'}
 
 
 # Alimentation des loyers manuels en fonction de la durée choisie
-@app.callback(
+@app.expanded_callback(
     Output('manual_rents', 'data'),
-    [Input('durationSlider', 'value'),],
+    [Input('durationSlider', 'value'),
+    Input('manual', 'value')],
     [State('manual_rents', 'data')]
     )
-def create_manual(durationValue, rows):
+def create_manual(durationValue, manualValue, rows, **kwargs):
     yearref = datetime.datetime.now().year
     durationvalue = int(durationValue)
     # Calcul du nombre de lignes de la table des loyers manuels : 1 par tranche de 12 mois de la durée choisie ... +1
@@ -438,19 +450,19 @@ def create_manual(durationValue, rows):
 
 
 # Calcul du loyer inconnu et création du calendrier de loyers
-@app.callback(
+@app.expanded_callback(
     Output('schedule', 'data'),
-    [
-        Input('durationSlider', 'value'),
-        Input('amountSlider', 'value'),
-        Input('rvSlider', 'value'),
-        Input('manual_rents', 'data'),
-        Input('mode', 'value'),
-        Input('rateSlider', 'value'),
-    ]
+        [
+            Input('durationSlider', 'value'),
+            Input('amountSlider', 'value'),
+            Input('rvSlider', 'value'),
+            Input('manual_rents', 'data'),
+            Input('mode', 'value'),
+            Input('rateSlider', 'value'),
+        ]
     )
-def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue):
-
+def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue, **kwargs):
+    #création du calendrier à partir de la table des loyers manuels
     rent = []
     j=1
     amountvalue = int(amountValue)
@@ -467,12 +479,14 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     npvvalue = 0
     npvcoeff = 0
     d = []
+    crdo= []
+    rento = []
     k=0
-
+    j=0   
     # en mode advance
     if modeValue=='01':
         for p in rent:
-            #actualisation
+            #actualisations
             val = 0
             coeff = 0
             if rent[k] != None and str(rent[k]).isnumeric():
@@ -483,17 +497,11 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
-        #calcul de la valeur actuelle de la vr
         npvrv = rvvalue / pow((1+rate),durationValue)
-        #calcul du montant des loyers en coefficient
         npvfin = amountvalue - npvvalue - npvrv
-        #calcul du loyer principal
         rent_calculated = float(npvfin / npvcoeff)
-        #remplissage du calendrier de loyers en mémoire
-        rento = []
-        crdo= []
+        #alimentation du calendrier de loyers en mémoire
         crd = amountvalue
-        j=0
         for q in rent:
             rentschedule = rent_calculated
             if rent[j] != None and str(rent[j]).isnumeric():
@@ -503,7 +511,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             rento.append(rentschedule)
             crdo.append(crd)
             j=j+1
-
     # en mode arrear
     else:
         for p in rent:
@@ -518,17 +525,11 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
-        #calcul de la valeur actuelle de la vr
         npvrv = rvvalue / pow((1+rate),durationValue)
-        #calcul du montant des loyers en coefficient
         npvfin = amountvalue - npvvalue - npvrv
-        #calcul du loyer principal
         rent_calculated = float(npvfin / npvcoeff)
-        #remplissage du calendrier de loyers en mémoire
-        rento = []
-        crdo= []
+        #alimentation du calendrier de loyers en mémoire
         crd = amountvalue
-        j=0
         for q in rent:
             rentschedule = rent_calculated
             if rent[j] != None and str(rent[j]).isnumeric():
@@ -553,11 +554,11 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     return df.to_dict('rows')
 
 # Alimentation de la zone résultat
-@app.callback(
+@app.expanded_callback(
     Output('result', 'children'),
     [Input('schedule', 'data'),
     Input('manual_rents', 'data')])
-def result(scheduleRows, manuals):
+def result(scheduleRows, manuals, **kwargs):
     a=0
     i=1
     months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
@@ -575,18 +576,17 @@ def result(scheduleRows, manuals):
     for scheduleRow in scheduleRows:
         globalSum = globalSum + float(scheduleRow['rent'])
         globalNb = globalNb + 1
-    
     # calcul du total des loyers non manuels
     calcSum = globalSum - manualSum
     calclNb = globalNb - manualNb
     # calcul et affichage du loyer non manuel
-    return "€ {:0,.1f}".format(float(calcSum/calclNb))
+    return "Monthly rent = € {:0,.1f}, w/".format(float(calcSum/calclNb))
 
 # Alimentation du graphique
-@app.callback(
+@app.expanded_callback(
     Output('graph', 'figure'),
     [Input('schedule', 'data')])
-def update_graph(rows):
+def update_graph(rows, **kwargs):
     i=0
     rentx = []
     renty = []
@@ -598,10 +598,8 @@ def update_graph(rows):
         rentx.append(row['date'])
         renty.append(row['rent'])
         i=i+1
-    
     # Create figure with secondary y-axis
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-
     # Add traces
     fig.add_trace(
         go.Scatter(x=crdx, y=crdy, name="Balance", marker_color='#f6c23e', mode='markers'),
@@ -611,14 +609,53 @@ def update_graph(rows):
         go.Bar(x=rentx, y=renty, name="Rent", marker_color='#4e73df'),
         secondary_y=False,
     )
-
-    # Add figure 
     fig.update_layout(
         title_text="Balance and rent amounts"
     )
-
     # Set y-axes titles
     fig.update_yaxes(title_text="<b>Balance</b>", secondary_y=True)
     fig.update_yaxes(title_text="<b>Rent</b>", secondary_y=False)
 
     return fig
+
+
+#Enregistrement en BDD
+@app.expanded_callback(
+    Output('output-one','children'),
+        [   
+            Input('save_quote_button', 'n_clicks'),
+            Input('durationSlider', 'value'),
+            Input('amountSlider', 'value'),
+            Input('rvSlider', 'value'),
+            Input('schedule', 'data'),
+            Input('mode', 'value'),
+            Input('rateSlider', 'value')
+        ]
+    )
+
+def callback_c(n, durationValue, amountValue, rvValue, rows, modeValue, rateValue, **kwargs):
+    user = kwargs['user']
+    if n is None:
+        user = kwargs['user']
+        return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
+        ]
+    
+        return dash.no_update
+    else:
+        if n > 1:
+                return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+  ]
+        schedule = Schedule()
+        schedule.contract = 1
+        schedule.mode = modeValue
+        schedule.rv = rvValue
+        schedule.amount = amountValue
+        schedule.start_date = startdate
+        schedule.save()
+        return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.Div('Quote saved !', className='h3 mb-0 text-gray-800'),
+]

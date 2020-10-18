@@ -13,6 +13,10 @@ from dateutil.relativedelta import relativedelta
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from core.models import Contract
+from core.models import Schedule
+from core.models import Step
+
 
 startdate = datetime.datetime.now()
 
@@ -23,10 +27,10 @@ app = DjangoDash("ReverseApp")
 
 app.layout = html.Div(
     [      
-        html.Div(className='d-sm-flex align-items-center justify-content-between mb-4',
+        html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Lease reverse quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Adjust rents", id="manual-rents-button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm")
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
             ]
         ),
 
@@ -113,27 +117,34 @@ app.layout = html.Div(
                                 ),
                                 html.Div(className='card-body',
                                     children=[
-                                        html.Div(className='row no-gutters align-items-center',
-                                            children=[
-                                                html.H2(id='result', className='mb-2 font-weight-bold text-gray-800'),
-                                            ]
-                                        ),
-                                        dcc.RadioItems(id='mode',
-                                            options=[
-                                                {'label': 'Advanced mode', 'value': '01'},
-                                                {'label': 'Arrear mode', 'value': '02'}
-                                            ],
-                                            value='01',
-                                            style={"padding": "auto", "max-width": "800px", "margin": "auto"},
-                                            labelStyle={'display': 'block'}
-                                        ),
-                                        html.Div('Annual rate to be used', className='font-weight-bold text-primary'),
+                                        html.Div('Annual rate', className='font-weight-bold text-primary'),
                                         dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
                                             marks={
                                                 0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
                                             },
                                             tooltip = 'always_visible',
-                                            className='px-1'
+                                            className='px-1 mb-2'
+                                        ),
+                                        html.Div(className='row no-gutters align-items-center',
+                                            children=[
+                                                html.H4(id='result', className='font-weight-bold text-gray-800'),
+                                            ]
+                                        ),
+                                        dbc.RadioItems(id='mode', className = 'mb-2 radioitems',
+                                            options=[
+                                                {'label': 'Advanced mode', 'value': '01'},
+                                                {'label': 'Arrear mode', 'value': '03'}
+                                            ],
+                                            value='01',
+                                            inline=True,
+                                        ),
+                                        dbc.RadioItems(id='manual',
+                                            options=[
+                                                {'label': 'No manual rent', 'value': '02'},
+                                                {'label': 'W/ manual rent', 'value': '01'}
+                                            ],
+                                            value='02',
+                                            inline=True,
                                         ),
                                     ]
                                 ),
@@ -289,11 +300,11 @@ app.layout = html.Div(
 )
 
 # Mise à jour alignée des zones input et slider pour amount
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_amount', 'children'),
     [Input('amountInput', 'value'), Input('amountSlider', "value")]
 )
-def amount_update(valueInput, valueSlider):
+def amount_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "amountSlider.value"
@@ -330,11 +341,11 @@ def amount_update(valueInput, valueSlider):
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour RV
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_rv', 'children'),
     [Input('rvInput', 'value'), Input('rvSlider', "value")]
 )
-def rv_update(valueInput, valueSlider):
+def rv_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "rvSlider.value"
@@ -372,11 +383,11 @@ def rv_update(valueInput, valueSlider):
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour duration
-@app.callback(
+@app.expanded_callback(
     Output('wrapper_duration', 'children'),
     [Input('durationInput', 'value'), Input('durationSlider', "value")]
 )
-def duration_update(valueInput, valueSlider):
+def duration_update(valueInput, valueSlider, **kwargs):
     ctx = dash.callback_context
     if not ctx.triggered:
         trigger_id = "durationSlider.value"
@@ -415,23 +426,24 @@ def duration_update(valueInput, valueSlider):
 
 
 # Démasquage des loyers manuels
-@app.callback(
+@app.expanded_callback(
     Output('table-container', 'style'),
-    [Input('manual-rents-button', 'n_clicks')])
-def on_button_click(n):
-    if n is None:
+    [Input('manual', 'value')])
+def show_manual(manualValue, **kwargs):
+    if manualValue !='01':
         return {'display': 'none'}
     else:
         return {'display': 'block'}
 
 
 # Alimentation des loyers manuels en fonction de la durée choisie
-@app.callback(
+@app.expanded_callback(
     Output('manual_rents', 'data'),
-    [Input('durationSlider', 'value'),],
+    [Input('durationSlider', 'value'),
+    Input('manual', 'value')],
     [State('manual_rents', 'data')]
     )
-def create_manual(durationValue, rows):
+def create_manual(durationValue, manualValue, rows, **kwargs):
     yearref = datetime.datetime.now().year
     durationvalue = int(durationValue)
     # Calcul du nombre de lignes de la table des loyers manuels : 1 par tranche de 12 mois de la durée choisie ... +1
@@ -458,18 +470,18 @@ def create_manual(durationValue, rows):
 
 
 # Calcul du montant financé et création du calendrier de loyers
-@app.callback(
+@app.expanded_callback(
     Output('schedule', 'data'),
-    [
-        Input('durationSlider', 'value'),
-        Input('amountSlider', 'value'),
-        Input('rvSlider', 'value'),
-        Input('manual_rents', 'data'),
-        Input('mode', 'value'),
-        Input('rateSlider', 'value'),
-    ]
+        [
+            Input('durationSlider', 'value'),
+            Input('amountSlider', 'value'),
+            Input('rvSlider', 'value'),
+            Input('manual_rents', 'data'),
+            Input('mode', 'value'),
+            Input('rateSlider', 'value'),
+        ]
     )
-def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue):
+def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateValue, **kwargs):
     rent = []
     j=1
     amountvalue = int(amountValue)
@@ -567,7 +579,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
 
 
 # Alimentation de la zone résultat
-@app.callback(
+@app.expanded_callback(
     Output('result', 'children'),
         [
         Input('schedule', 'data'),
@@ -576,7 +588,7 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
         Input('rateSlider', 'value'),
         ]
     )
-def result(scheduleRows, modeValue, rvValue, rateValue):
+def result(scheduleRows, modeValue, rvValue, rateValue, **kwargs):
     val = 0
     k = 0
     rate = rateValue/120000
@@ -592,13 +604,13 @@ def result(scheduleRows, modeValue, rvValue, rateValue):
         val = val + rvValue / pow((1+rate),k)
 
     # affichage du montant à financer
-    return '€ {:0,.1f}'.format(val)
+    return 'Amount = € {:0,.1f}, w/'.format(val)
 
 # Alimentation du graphique
-@app.callback(
+@app.expanded_callback(
     Output('graph', 'figure'),
     [Input('schedule', 'data')])
-def update_graph(rows):
+def update_graph(rows, **kwargs):
     i=0
     rentx = []
     renty = []
@@ -634,3 +646,59 @@ def update_graph(rows):
     fig.update_yaxes(title_text="<b>Rent</b>", secondary_y=False)
 
     return fig
+
+
+
+#Enregistrement en BDD
+@app.expanded_callback(
+    Output('output-one','children'),
+        [   
+            Input('save_quote_button', 'n_clicks'),
+            Input('durationSlider', 'value'),
+            Input('amountSlider', 'value'),
+            Input('rvSlider', 'value'),
+            Input('schedule', 'data'),
+            Input('mode', 'value'),
+            Input('rateSlider', 'value')
+        ]
+    )
+
+def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, rateValue, **kwargs):
+    user = kwargs['user']
+    if n is None:
+        user = kwargs['user']
+        return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
+        ]
+    
+        return dash.no_update
+    else:
+        if n > 1:
+            return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                ] 
+        val = 0
+        k = 0
+        rate = rateValue/120000
+        if modeValue=='01':
+            for scheduleRow in scheduleRows:
+                val = val + (float(scheduleRow['rent'] / pow((1+rate),k)))
+                k=k+1
+            val = val + rvValue / pow((1+rate),k)
+        else :
+            for scheduleRow in scheduleRows:
+                val = val + (float(scheduleRow['rent'] / pow((1+rate),k+1)))
+                k=k+1
+            val = val + rvValue / pow((1+rate),k)
+        schedule = Schedule()
+        schedule.contract = 1
+        schedule.mode = modeValue
+        schedule.rv = rvValue
+        schedule.amount = val
+        schedule.start_date = startdate
+        schedule.save()
+        return [
+                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.Div('Quote saved !', className='h3 mb-0 text-gray-800'),
+]
