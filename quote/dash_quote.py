@@ -655,7 +655,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         schedule.amount = amountValue
         schedule.start_date = startdate
         schedule.rate = rateValue/120000
-        schedule.save()
+        #schedule.save()
         i=0
         for scheduleRow in scheduleRows:
             if (modeValue=='01') :
@@ -668,7 +668,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
             step.rent = scheduleRow['rent']
             step.balance = scheduleRow['balance']
             step.date = date
-            step.save()
+            #step.save()
 
         return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
