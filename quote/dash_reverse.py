@@ -152,7 +152,7 @@ app.layout = html.Div(
                         ),
                         html.Div(className='card-body',
                             children=[ 
-                                html.Img(src="../staticfiles/img/undraw_posting_photo.svg", className='img-fluid px-3 px-sm-4 mt-3 mb-4')
+                                html.Img(src="../staticfiles/img/undraw_posting_photo.svg", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
                         )
                     ]
@@ -675,30 +675,32 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         return dash.no_update
     else:
         if n > 1:
-            return [
+                return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                ] 
-        val = 0
-        k = 0
-        rate = rateValue/120000
-        if modeValue=='01':
-            for scheduleRow in scheduleRows:
-                val = val + (float(scheduleRow['rent'] / pow((1+rate),k)))
-                k=k+1
-            val = val + rvValue / pow((1+rate),k)
-        else :
-            for scheduleRow in scheduleRows:
-                val = val + (float(scheduleRow['rent'] / pow((1+rate),k+1)))
-                k=k+1
-            val = val + rvValue / pow((1+rate),k)
+  ]
         schedule = Schedule()
         schedule.contract = 1
         schedule.mode = modeValue
         schedule.rv = rvValue
-        schedule.amount = val
+        schedule.amount = amountValue
         schedule.start_date = startdate
+        schedule.rate = rateValue/120000
         schedule.save()
+        i=0
+        for scheduleRow in scheduleRows:
+            if (modeValue=='01') :
+                date = startdate + relativedelta(months=i)
+            else :
+                date = startdate + relativedelta(months=i+1)
+            i=i+1
+            step = Step()
+            step.schedule = schedule
+            step.rent = scheduleRow['rent']
+            step.balance = scheduleRow['balance']
+            step.date = date
+            step.save()
+
         return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
                 html.Div('Quote saved !', className='h3 mb-0 text-gray-800'),
-]
+        ]

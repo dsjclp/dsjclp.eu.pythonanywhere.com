@@ -47,6 +47,7 @@ class Contract(models.Model):
 class Schedule(models.Model):
     amount = models.FloatField()
     rv = models.FloatField()
+    rate = models.FloatField()
     ADVANCED = 'Advanced'
     ARREAR = 'Arrear'
     MODE_CHOICES = [
@@ -57,6 +58,7 @@ class Schedule(models.Model):
     mode = models.CharField(max_length=9,
         choices=MODE_CHOICES,
         default=ADVANCED,)
+
 
     def __str__(self):
         return str(self.id)
