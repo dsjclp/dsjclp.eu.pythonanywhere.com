@@ -118,34 +118,51 @@ app.layout = html.Div(
                                 ),
                                 html.Div(className='card-body',
                                     children=[
-                                        html.Div('Annual rate', className='font-weight-bold text-primary'),
-                                        dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
+                                        dbc.FormGroup(
+                                            [
+                                                dbc.Label("Calculation mode", className='font-weight-bold'),
+                                                dbc.RadioItems(
+                                                    options=[
+                                                        {"label": "Advanced", "value": '01'},
+                                                        {"label": "Arrear", "value": '02'},
+                                                    ],
+                                                    value='01',
+                                                    id="mode",
+                                                    inline=True,
+                                                ),
+                                            ]
+                                        ),
+                                        dbc.FormGroup(
+                                            [
+                                                dbc.Label("Manual rents", className='font-weight-bold'),
+                                                dbc.RadioItems(
+                                                    options=[
+                                                        {"label": "No", "value": '02'},
+                                                        {"label": "Yes", "value": '01'},
+                                                    ],
+                                                    value='02',
+                                                    id="manual",
+                                                    inline=True,
+                                                ),
+                                            ]
+                                        ),
+                                        dbc.FormGroup(
+                                            [
+                                                dbc.Label("Annual rate", className='font-weight-bold'),
+                                                dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
                                             marks={
                                                 0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
                                             },
                                             tooltip = 'always_visible',
                                             className='px-1 mb-2'
                                         ),
+                                            ]
+                                        ),
+
                                         html.Div(className='row no-gutters align-items-center',
                                             children=[
                                                 html.H4(id='result', className='font-weight-bold text-gray-800'),
                                             ]
-                                        ),
-                                        dbc.RadioItems(id='mode', className = 'mb-2 radioitems',
-                                            options=[
-                                                {'label': 'Advanced mode', 'value': '01'},
-                                                {'label': 'Arrear mode', 'value': '03'}
-                                            ],
-                                            value='01',
-                                            inline=True,
-                                        ),
-                                        dbc.RadioItems(id='manual',
-                                            options=[
-                                                {'label': 'No manual rent', 'value': '02'},
-                                                {'label': 'W/ manual rent', 'value': '01'}
-                                            ],
-                                            value='02',
-                                            inline=True,
                                         ),
                                     ]
                                 ),
@@ -153,7 +170,7 @@ app.layout = html.Div(
                         ),
                         html.Div(className='card-body',
                             children=[ 
-                                html.Img(src="../staticfiles/img/undraw_posting_photo.svg", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
+                                html.Img(src="../staticfiles/img/advance.jpg", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
                         )
                     ]
@@ -580,7 +597,7 @@ def result(scheduleRows, manuals, **kwargs):
     calcSum = globalSum - manualSum
     calclNb = globalNb - manualNb
     # calcul et affichage du loyer non manuel
-    return "Monthly rent = € {:0,.1f}, w/".format(float(calcSum/calclNb))
+    return "Monthly rent = € {:0,.1f}".format(float(calcSum/calclNb))
 
 # Alimentation du graphique
 @app.expanded_callback(
