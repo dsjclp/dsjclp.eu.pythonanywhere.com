@@ -150,12 +150,12 @@ app.layout = html.Div(
                                             [
                                                 dbc.Label("Annual rate", className='font-weight-bold'),
                                                 dcc.Slider(id='rateSlider',min=0,max=500,value=500,step=10,updatemode='drag',
-                                            marks={
-                                                0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
-                                            },
-                                            tooltip = 'always_visible',
-                                            className='px-1 mb-2'
-                                        ),
+                                                    marks={
+                                                        0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
+                                                    },
+                                                    tooltip = 'always_visible',
+                                                    className='px-1 mb-2'
+                                                ),
                                             ]
                                         ),
 
@@ -170,7 +170,7 @@ app.layout = html.Div(
                         ),
                         html.Div(className='card-body',
                             children=[ 
-                                html.Img(src="../staticfiles/img/advance.jpg", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
+                                html.Img(src="../staticfiles/img/advance.png", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
                         )
                     ]
@@ -182,7 +182,7 @@ app.layout = html.Div(
             [
                 dbc.Col(className='mb-4',
                     children=[
-                        html.Div(className='card border-bottom-secondary shadow mb-4',
+                        html.Div(className='card border-left-secondary shadow mb-4',
                             children=[
                                 html.Div(className='card-header py-3 d-flex flex-row align-items-center justify-content-between',
                                     children=[
