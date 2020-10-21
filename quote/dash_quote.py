@@ -30,7 +30,7 @@ app.layout = html.Div(
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
             ]
         ),
 
@@ -132,8 +132,8 @@ app.layout = html.Div(
                                                 ),
                                             ]
                                         ),
-                                        dbc.FormGroup(
-                                            [
+                                        dbc.FormGroup(className='d-none d-md-block',
+                                            children=[
                                                 dbc.Label("Manual rents", className='font-weight-bold'),
                                                 dbc.RadioItems(
                                                     options=[
@@ -168,7 +168,7 @@ app.layout = html.Div(
                                 ),
                             ]
                         ),
-                        html.Div(className='card-body',
+                        html.Div(className='d-none d-md-block card-body',
                             children=[ 
                                 html.Img(src="../staticfiles/img/advance.png", alt='devices', className='img-fluid px-3 px-sm-4 mt-3 mb-4')
                             ]
@@ -180,7 +180,7 @@ app.layout = html.Div(
                                 
         dbc.CardGroup(
             [
-                dbc.Col(className='mb-4',
+                dbc.Col(className='d-none d-md-block mb-4',
                     children=[
                         html.Div(className='card border-left-secondary shadow mb-4',
                             children=[
@@ -225,7 +225,7 @@ app.layout = html.Div(
 
         dbc.CardGroup(
             [
-                dbc.Col(className='col-sm-12',
+                dbc.Col(className='d-none d-md-block col-sm-12',
                     children=[
                         html.Div(className='card border-left-warning shadow mb-4',
                             children=[
@@ -656,7 +656,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         user = kwargs['user']
         return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Save quote", id="save_quote_button", className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
         ]
     
         return dash.no_update
