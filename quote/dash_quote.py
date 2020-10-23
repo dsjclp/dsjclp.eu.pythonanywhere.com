@@ -7,13 +7,10 @@ import pandas as pd
 from django_plotly_dash import DjangoDash
 from dash.dependencies import Input, Output, State
 from dash_table.Format import Format, Group, Scheme, Symbol
-
 import datetime
 from dateutil.relativedelta import relativedelta
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-
-from core.models import Contract
 from core.models import Schedule
 from core.models import Step
 
@@ -38,86 +35,86 @@ app.layout = html.Div(
             [
                 dbc.Card(
                     [
-                    dbc.CardHeader("Your input", className="card-title font-weight-bold text-secondary"),
-                    dbc.CardBody(
-                        [
-                            dbc.FormGroup(id='wrapper_amount',
-                                children=[
-                                    dbc.Label("Financed amount", html_for="amountInput", className='font-weight-bold text-gray-800 mb-2'),
-                                    dbc.InputGroup(
-                                        [
-                                            dbc.InputGroupAddon("€", addon_type="prepend"),
-                                            dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=10000, debounce=True, className='form-control'),                             
-                                        ],
-                                        className="mb-2",
+                        dbc.CardHeader("Your input", className="card-title font-weight-bold text-secondary"),
+                        dbc.CardBody(
+                            [
+                                dbc.FormGroup(id='wrapper_amount',
+                                    children=[
+                                        dbc.Label("Financed amount", html_for="amountInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.InputGroup(
+                                            [
+                                                dbc.InputGroupAddon("€", addon_type="prepend"),
+                                                dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=10000, debounce=True, className='form-control'),                             
+                                            ],
+                                            className="mb-2",
+                                            ),
+                                        dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
+                                            marks={
+                                                10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
+                                            },
+                                            tooltip = 'always_visible',
                                         ),
-                                    dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
-                                        marks={
-                                            10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
-                                        },
-                                        tooltip = 'always_visible',
-                                    ),
-                                ]
-                            ),
-                            dbc.FormGroup(id='wrapper_rv',
-                                children=[
-                                    dbc.Label("Residual value", html_for="rvInput", className='font-weight-bold text-gray-800 mb-2'),
-                                    dbc.InputGroup(
-                                        [
-                                            dbc.InputGroupAddon("€", addon_type="prepend"),
-                                            dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                
-                                        ],
-                                        className="mb-2",
+                                    ]
+                                ),
+                                dbc.FormGroup(id='wrapper_rv',
+                                    children=[
+                                        dbc.Label("Residual value", html_for="rvInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.InputGroup(
+                                            [
+                                                dbc.InputGroupAddon("€", addon_type="prepend"),
+                                                dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                
+                                            ],
+                                            className="mb-2",
+                                            ),
+                                        dcc.Slider(id='rvSlider',min=0,max=30000,value=0,step=1000,updatemode='drag',
+                                            marks={
+                                                00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
+                                            },
+                                            tooltip = 'always_visible',
                                         ),
-                                    dcc.Slider(id='rvSlider',min=0,max=30000,value=0,step=1000,updatemode='drag',
-                                        marks={
-                                            00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
-                                        },
-                                        tooltip = 'always_visible',
-                                    ),
-                                ]
-                            ),
-                            dbc.FormGroup(id='wrapper_duration',
-                                children=[
-                                    dbc.Label("Duration", html_for="durationInput", className='font-weight-bold text-gray-800 mb-2'),
-                                    dbc.InputGroup(
-                                        [
-                                            dbc.InputGroupAddon("Months", addon_type="prepend"),
-                                            dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                   
-                                        ],
-                                        className="mb-2",
+                                    ]
+                                ),
+                                dbc.FormGroup(id='wrapper_duration',
+                                    children=[
+                                        dbc.Label("Duration", html_for="durationInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.InputGroup(
+                                            [
+                                                dbc.InputGroupAddon("Months", addon_type="prepend"),
+                                                dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                   
+                                            ],
+                                            className="mb-2",
+                                            ),
+                                        dcc.Slider(id='durationSlider',min=12,max=84,value=24,step=1,updatemode='drag',
+                                            marks={
+                                                12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
+                                            },
+                                            tooltip = 'always_visible',
                                         ),
-                                    dcc.Slider(id='durationSlider',min=12,max=84,value=24,step=1,updatemode='drag',
-                                        marks={
-                                            12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
-                                        },
-                                        tooltip = 'always_visible',
-                                    ),
-                                ]
-                            ),
-                            dbc.FormGroup(id='wrapper_rate',
-                                children=[
-                                    dbc.Label("Annual rate", html_for="rateInput", className='font-weight-bold text-gray-800 mb-2'),
-                                    dbc.InputGroup(
-                                        [
-                                            dbc.InputGroupAddon("%", addon_type="prepend"),
-                                            dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=200, debounce=True, className='form-control'),    
-                                                                        
-                                        ],
-                                        className="mb-2",
+                                    ]
+                                ),
+                                dbc.FormGroup(id='wrapper_rate',
+                                    children=[
+                                        dbc.Label("Annual rate", html_for="rateInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.InputGroup(
+                                            [
+                                                dbc.InputGroupAddon("%", addon_type="prepend"),
+                                                dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=200, debounce=True, className='form-control'),    
+                                                                            
+                                            ],
+                                            className="mb-2",
+                                            ),
+                                        dcc.Slider(id='rateSlider',min=0,max=500,value=200,step=10,updatemode='drag',
+                                            marks={
+                                                0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
+                                            },
+                                            tooltip = 'always_visible',
                                         ),
-                                    dcc.Slider(id='rateSlider',min=0,max=500,value=200,step=10,updatemode='drag',
-                                        marks={
-                                            0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
-                                        },
-                                        tooltip = 'always_visible',
-                                    ),
-                                ]
-                            ),                    
-                        ]
-                    ),
-                ],
-                className='card border-left-primary shadow mb-4'
+                                    ]
+                                ),                    
+                            ]
+                        ),
+                    ],
+                    className='card border-left-primary shadow mb-4'
                 ),
                 dbc.Card(
                     [
@@ -128,7 +125,7 @@ app.layout = html.Div(
                                     [  
                                         dbc.Alert(
                                             [
-                                                html.Div(id='result', className='h4 text-center my-auto font-weight-bold')
+                                                html.Div(id='result', className='h2 text-center my-auto font-weight-bold')
                                             ],
                                             color="warning"
                                         ),
@@ -137,26 +134,29 @@ app.layout = html.Div(
                                             [
                                                 html.Img(src="../staticfiles/img/advance.png", alt='formula', className='img-fluid text-center my-auto')
                                             ],
-                                            color='secondary'
+                                            color='secondary',
+                                            id='formula',
                                         ),
                                         html.Hr(className="my-4 d-none d-md-block"),
-                                        dbc.FormGroup(
+                                        dbc.Alert(
                                             [
-                                                dbc.Label("Calculation mode", className='font-weight-bold'),
+                                             dbc.Label("Payments in:", className='font-weight-bold'),
                                                 dbc.RadioItems(
                                                     options=[
-                                                        {"label": "Advanced", "value": '01'},
-                                                        {"label": "Arrear", "value": '02'},
+                                                        {"label": "Advance", "value": '01'},
+                                                        {"label": "Arrears", "value": '02'},
                                                     ],
                                                     value='01',
                                                     id="mode",
                                                     inline=True,
                                                 ),
-                                            ]
+
+                                            ],
+                                            color="light"
                                         ),
-                                        dbc.FormGroup(className='d-none d-md-block',
-                                            children=[
-                                                dbc.Label("Manual rents", className='font-weight-bold'),
+                                        dbc.Alert(
+                                            [
+                                                dbc.Label("With manual rents:", className='font-weight-bold'),
                                                 dbc.RadioItems(
                                                     options=[
                                                         {"label": "No", "value": '02'},
@@ -166,7 +166,8 @@ app.layout = html.Div(
                                                     id="manual",
                                                     inline=True,
                                                 ),
-                                            ]
+                                            ],
+                                            color="light d-none d-md-block"
                                         ),
                                     ]
                                 ),
@@ -296,7 +297,6 @@ def amount_update(valueInput, valueSlider, **kwargs):
             tooltip = 'always_visible',
         ),
     ]
-    
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour RV
@@ -337,7 +337,6 @@ def rv_update(valueInput, valueSlider, **kwargs):
             tooltip = 'always_visible',
         ),
     ]
-    
     return dash.no_update
 
 # Mise à jour alignée des zones input et slider pour duration
@@ -376,7 +375,6 @@ def duration_update(valueInput, valueSlider, **kwargs):
             tooltip = 'always_visible',
         ),
     ]
-    
     return dash.no_update
 
 
@@ -400,11 +398,9 @@ def rate_update(valueInput, valueSlider, **kwargs):
         valueInput = valueInput.replace('.','')
         valueInput = valueInput.replace(',','')
         valueForinput = "{:0,.2f}".format(int(valueInput)/100)
-
         valueForslider = valueInput
 
     return [
-
         dbc.Label("Annual rate", html_for="rateInput", className='font-weight-bold text-gray-800 mb-2'),
         dbc.InputGroup(
             [
@@ -420,13 +416,10 @@ def rate_update(valueInput, valueSlider, **kwargs):
             },
             tooltip = 'always_visible',
         ),
-    ]
-    
+    ]   
     return dash.no_update
 
-
-
-# Démasquage des loyers manuels
+# Affichage des loyers manuels
 @app.expanded_callback(
     Output('table-container', 'style'),
     [Input('manual', 'value')])
@@ -435,7 +428,6 @@ def show_manual(manualValue, **kwargs):
         return {'display': 'none'}
     else:
         return {'display': 'block'}
-
 
 # Alimentation des loyers manuels en fonction de la durée choisie
 @app.expanded_callback(
@@ -466,9 +458,7 @@ def create_manual(durationValue, manualValue, rows, **kwargs):
                 for x in range(12, dec, -1):
                     df[str(x)][y]= 'N/A'
             y=y+1
-
     return df.to_dict('rows')
-
 
 # Calcul du loyer inconnu et création du calendrier de loyers
 @app.expanded_callback(
@@ -495,7 +485,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             if(j<= durationValue): 
                 rent.append(row[str(k)])
             j=j+1
-
     #calcul des valeurs actuelles des loyers fixes et des coefficients
     rate = rateValue/120000
     npvvalue = 0
@@ -508,21 +497,18 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     # en mode advance
     if modeValue=='01':
         for p in rent:
-            #actualisations
             val = 0
             coeff = 0
             if rent[k] != None and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k))
             else:
                 coeff = 1 / pow((1+rate),k)
-            #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
         npvrv = rvvalue / pow((1+rate),durationValue)
         npvfin = amountvalue - npvvalue - npvrv
         rent_calculated = float(npvfin / npvcoeff)
-        #alimentation du calendrier de loyers en mémoire
         crd = amountvalue
         for q in rent:
             rentschedule = rent_calculated
@@ -536,21 +522,18 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     # en mode arrear
     else:
         for p in rent:
-            #actualisation
             val = 0
             coeff = 0
             if (rent[k] != None) and str(rent[k]).isnumeric():
                 val = (int(rent[k]) / pow((1+rate),k+1))
             else:
                 coeff = 1 / pow((1+rate),k+1)
-            #cumul des valeurs actualisées
             npvvalue = npvvalue + val
             npvcoeff = npvcoeff + coeff
             k=k+1
         npvrv = rvvalue / pow((1+rate),durationValue)
         npvfin = amountvalue - npvvalue - npvrv
         rent_calculated = float(npvfin / npvcoeff)
-        #alimentation du calendrier de loyers en mémoire
         crd = amountvalue
         for q in rent:
             rentschedule = rent_calculated
@@ -575,12 +558,16 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     df= pd.DataFrame(d, columns=["date", "rent", "balance"])
     return df.to_dict('rows')
 
-# Alimentation du loyer résultat
+# Alimentation de la carte resultat
 @app.expanded_callback(
     Output('result', 'children'),
-    [Input('schedule', 'data'),
-    Input('manual_rents', 'data')])
-def result(scheduleRows, manuals, **kwargs):
+        [
+            Input('schedule', 'data'),
+            Input('manual_rents', 'data'),
+            Input('mode', 'value'),
+         ]
+    )
+def update_result(scheduleRows, manuals, modeValue, **kwargs):
     a=0
     i=1
     months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
@@ -602,7 +589,8 @@ def result(scheduleRows, manuals, **kwargs):
     calcSum = globalSum - manualSum
     calclNb = globalNb - manualNb
     # calcul et affichage du loyer non manuel
-    return "€ {:0,.1f}".format(float(calcSum/calclNb))
+    return ['€ {:0,.1f}'.format(float(calcSum/calclNb))]
+    return dash.no_update
 
 # Alimentation du graphique
 @app.expanded_callback(
@@ -654,7 +642,6 @@ def update_graph(rows, **kwargs):
             Input('rateSlider', 'value')
         ]
     )
-
 def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, rateValue, **kwargs):
     user = kwargs['user']
     if n is None:
@@ -696,3 +683,18 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
                 html.Div('Quote saved !', className='h3 mb-0 text-gray-800'),
         ]
+
+# Alimentation de la carte formule
+@app.expanded_callback(
+    Output('formula', 'children'),
+        [
+            Input('mode', 'value'),
+         ]
+    )
+def update_formula(modeValue, **kwargs):
+    formule = '../staticfiles/img/advance.png'
+    modeValue = int(modeValue)
+    if modeValue == 2:
+        formule = '../staticfiles/img/arrear.png'
+    return [html.Img(src=formule, alt='formula', className='img-fluid text-center my-auto')]
+    return dash.no_update
