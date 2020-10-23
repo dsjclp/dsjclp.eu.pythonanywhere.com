@@ -315,6 +315,7 @@ def amount_update(valueInput, valueSlider, **kwargs):
         valueForslider = valueSlider
     
     if trigger_id == "amountInput.value":
+        valueInput = valueInput.replace(',','')
         valueForinput = int(valueInput)
         valueForslider = int(valueInput)
 
@@ -327,7 +328,7 @@ def amount_update(valueInput, valueSlider, **kwargs):
                         html.Div('€', className='input-group-text'),
                     ]
                 ),
-                dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value="{:0,.2f}".format(valueForinput), debounce=True, className='form-control'),    
+                dcc.Input(id="amountInput", type="text", min=100, max=10000, step=100,value="{:0,.0f}".format(valueForinput), debounce=True, className='form-control'),    
             ]
         ),
         dcc.Slider(id='amountSlider',min=100,max=10000,value=valueForslider,step=100,updatemode='drag',
@@ -356,6 +357,7 @@ def rv_update(valueInput, valueSlider, **kwargs):
         valueForslider = valueSlider
     
     if trigger_id == "rvInput.value":
+        valueInput = valueInput.replace(',','')
         valueForinput = int(valueInput)
         valueForslider = int(valueInput)
 
@@ -368,7 +370,7 @@ def rv_update(valueInput, valueSlider, **kwargs):
                         html.Div('€', className='input-group-text'),
                     ]
                 ),
-                dcc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value="{:0,.2f}".format(valueForinput), debounce=True, className='form-control'),    
+                dcc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value="{:0,.0f}".format(valueForinput), debounce=True, className='form-control'),    
             ]
         ),
         dcc.Slider(id='rvSlider',min=0,max=30000,value=valueForslider,step=1000,updatemode='drag',
