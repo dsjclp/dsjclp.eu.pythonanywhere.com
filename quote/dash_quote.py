@@ -48,9 +48,8 @@ app.layout = html.Div(
                                             ],
                                             className="mb-2",
                                             ),
-                                        dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
-                                            marks={
-                                                10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
+                                        dcc.Slider(id='amountSlider',min=100,max=10000,value=2000,step=100,updatemode='drag',
+                                            marks={100: {'label': '100€'},2000: {'label': '2000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
                                             },
                                             tooltip = 'always_visible',
                                         ),
