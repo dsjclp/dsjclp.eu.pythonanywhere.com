@@ -623,7 +623,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
     if n is None:
         user = kwargs['user']
         return [
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.Div('Lease quote', className='h3 mb-0'),
                 dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
         ]
     
@@ -645,6 +645,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         schedule.amount = amountValue
         schedule.start_date = startdate
         schedule.rate = rateValue/120000
+
         schedule.save()
         i=0
         for scheduleRow in scheduleRows:
