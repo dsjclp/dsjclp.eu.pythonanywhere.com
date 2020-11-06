@@ -1,20 +1,21 @@
 {%extends "base.html"%}
 {%block content%}
-  <!-- Page Heading -->
-  <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Contracts</h1>
-  </div>
 
-  {% if user.is_authenticated %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <div class="h3 mb-0">Contracts</div>
+</div>
+
+{% if user.is_authenticated %}
   
   <!-- Content Row -->
   <div class="row">
-    <!-- Area Chart -->
+
     <div class="col-xl-12 col-lg-12">
-      <div class="card shadow mb-4">
+      <div class="card mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Contract List</h6>
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary">
+          <h6 class="m-0 font-weight-bold">Your contracts</h6>
           <div class="dropdown no-arrow">
             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -31,34 +32,31 @@
         <!-- Card Body -->
         <div class="card-body">
           <div class="chart-area">
-            <a href="{% url 'core:contract_new'  %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mb-4"><i class="fas fa-file-contract fa-sm text-white-50"></i> Add contract</a>
+            <a href="{% url 'core:contract_new'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary mb-4"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add contract</a>
             <div class="table-responsive">
-              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <table class="table table-bordered table-striped table-dark" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                   <tr>
                     <th>Reference id</th>
-                    <th>Customer</th>
-                    <th>Amount</th>
                     <th>Status</th>
+                    <th>Status date</th>
                     <th>Link</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
                     <th>Reference id</th>
-                    <th>Customer</th>
-                    <th>Amount</th>
                     <th>Status</th>
+                    <th>Status-date</th>
                     <th>Link</th>
                   </tr>
                 </tfoot>
                 <tbody>
-                  {% for contract in contract_list %}
+                  {% for contract in contracts %}
                     <tr>
                       <td>{{ contract.id }}</td>
-                      <td>{{ contract.customer }}</td>
-                      <td>{{ contract.amount }}</td>
                       <td>{{ contract.status }}</td>
+                      <td>{{ contract.status_date }}</td>
                       <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="material-icons">see</i></a></td>
                     </tr>
                     {% endfor %}
@@ -77,5 +75,6 @@
   <a class="btn btn-warning login-btn mb-3" href="{%url 'core:login' %}">Login</a>
 
   {% endif %}
+
 
 {% endblock %}

@@ -7,20 +7,46 @@ from .forms import ContractForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from .models import Schedule
+from .models import Step
 
+class Dashboard(generic.TemplateView):
+    template_name = "core/dashboard.html"
 
+class Model(generic.TemplateView):
+    template_name = "core/model.html"
 
-class CustomerListView(generic.ListView):
-    model = Customer
-    template_name = 'core/customer_list.html'
+def customers_list(request):
+    customers=[]
+    if request.user.is_authenticated:
+        customers = Customer.objects.filter(user=request.user)
+    return render(request, 'core/customers_list.html', {'customers': customers})
 
-class CustomerDetailView(generic.DetailView):
-    model = Customer
-    template_name = 'core/customer_detail.html'
+def contracts_list(request):
+    contracts=[]
+    if request.user.is_authenticated:
+        contracts = Contract.objects.filter(user=request.user)
+    return render(request, 'core/contracts_list.html', {'contracts': contracts})
+
+def customer_detail(request,id):
+    customer = get_object_or_404(Customer, pk=id)
+    contracts = Contract.objects.filter(customer=customer)
+    return render(request, 'core/customer_detail.html', {'customer': customer, 'contracts': contracts})
+
+def contract_detail(request,id):
+    contract = get_object_or_404(Contract, pk=id)
+    schedules = Schedule.objects.filter(contract=contract)
+    return render(request, 'core/contract_detail.html', {'contract': contract, 'schedules': schedules})
+
+def schedule_detail(request,id):
+    schedule = get_object_or_404(Schedule, pk=id)
+    steps = Step.objects.filter(schedule=schedule)
+    return render(request, 'core/schedule_detail.html', {'schedule': schedule, 'steps': steps})
 
 def customer_new(request):
     if request.method == "POST":
         form = CustomerForm(request.POST)
+        form.instance.user = request.user
         if form.is_valid():
             customer = form.save(commit=False)
             customer.save()
@@ -28,15 +54,6 @@ def customer_new(request):
     else:
         form = CustomerForm()
     return render(request, 'core/customer_create.html', {'form': form})
-
-    
-class ContractListView(generic.ListView):
-    model = Contract
-    template_name = 'core/contract_list.html'
-
-class ContractDetailView(generic.DetailView):
-    model = Contract
-    template_name = 'core/contract_detail.html'
 
 def contract_new(request):
     if request.method == "POST":
@@ -48,52 +65,3 @@ def contract_new(request):
     else:
         form = ContractForm()
     return render(request, 'core/contract_create.html', {'form': form})
-
-
-
-from django.shortcuts import render
-
-#pylint: disable=unused-argument
-
-def dash_example_1_view(request, template_name="core/demo_six.html", **kwargs):
-    'Example view that inserts content into the dash context passed to the dash application'
-
-    context = {}
-
-    # create some context to send over to Dash:
-    dash_context = request.session.get("django_plotly_dash", dict())
-    dash_context['django_to_dash_context'] = "I am Dash receiving context from Django"
-    request.session['django_plotly_dash'] = dash_context
-
-    return render(request, template_name=template_name, context=context)
-
-def session_state_view(request, template_name, **kwargs):
-
-    session = request.session
-
-    demo_count = session.get('django_plotly_dash', {})
-
-    ind_use = demo_count.get('ind_use', 0)
-    ind_use += 1
-    demo_count['ind_use'] = ind_use
-    session['django_plotly_dash'] = demo_count
-
-    # Use some of the information during template rendering
-    context = {'ind_use' : ind_use}
-
-    return render(request, template_name=template_name, context=context)
-
-
-def table_view(request, template_name="core/demo_six.html", **kwargs):
-    'Example view that inserts content into the dash context passed to the dash application'
-
-    customers = Customer.objects.all()
-    toto = []
-    for customer in customers:
-        toto.append(customer.first_name)
-
-    context = {}
-    context['data'] = '{"dropdown-color": {"value": "green"}}'
-
-
-    return render(request, template_name=template_name, context=context)

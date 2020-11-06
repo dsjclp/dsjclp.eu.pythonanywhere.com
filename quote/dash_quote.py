@@ -11,8 +11,12 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from core.models import Customer
+from core.models import Contract
 from core.models import Schedule
 from core.models import Step
+from django.shortcuts import get_object_or_404
+import dash_daq as daq
 
 
 startdate = datetime.datetime.now()
@@ -20,85 +24,82 @@ startdate = datetime.datetime.now()
 # Create figure with secondary y-axis
 fig = make_subplots(specs=[[{"secondary_y": True}]])
 
-app = DjangoDash("QuoteApp")
+    
+BS = "../../../core/staticfiles/css/bootstrap.css"
+app = DjangoDash("QuoteApp", external_stylesheets=[BS])
+
+graphcolors = {
+    'background': '#222',
+    'text': '#fff'
+}
 
 app.layout = html.Div(
     [
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.Div('Lease quote', className='h3 mb-0'),
                 dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
             ]
         ),
-
         dbc.CardDeck(
             [
                 dbc.Card(
                     [
-                        dbc.CardHeader("Your input", className="card-title font-weight-bold text-secondary"),
+                        dbc.CardHeader("Your input", className="card-title font-weight-bold bg-primary"),
                         dbc.CardBody(
                             [
                                 dbc.FormGroup(id='wrapper_amount',
                                     children=[
-                                        dbc.Label("Financed amount", html_for="amountInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.Label("Financed amount", html_for="amountInput"),
                                         dbc.InputGroup(
                                             [
                                                 dbc.InputGroupAddon("€", addon_type="prepend"),
-                                                dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=10000, debounce=True, className='form-control'),                             
-                                            ],
-                                            className="mb-2",
+                                                dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=10000, className='bg-secondary')                       
+                                            ]
                                             ),
-                                        dcc.Slider(id='amountSlider',min=100,max=10000,value=2000,step=100,updatemode='drag',
-                                            marks={100: {'label': '100€'},2000: {'label': '2000€'},5000: {'label': '5000€'},10000: {'label': '10000€'},
-                                            },
-                                            tooltip = 'always_visible',
+                                        dcc.Slider(id='amountSlider',min=10000,max=100000,value=10000,step=1000,updatemode='drag',
+                                            marks={10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
+                                            }
                                         ),
                                     ]
                                 ),
                                 dbc.FormGroup(id='wrapper_rv',
                                     children=[
-                                        dbc.Label("Residual value", html_for="rvInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.Label("Residual value", html_for="rvInput"),
                                         dbc.InputGroup(
                                             [
                                                 dbc.InputGroupAddon("€", addon_type="prepend"),
-                                                dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                
+                                                dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=0, className='bg-secondary')                         
                                             ],
-                                            className="mb-2",
                                             ),
                                         dcc.Slider(id='rvSlider',min=0,max=30000,value=0,step=1000,updatemode='drag',
-                                            marks={
-                                                00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
-                                            },
-                                            tooltip = 'always_visible',
+                                            marks={00000: {'label': '0K'},10000: {'label': '10K'},20000: {'label': '20K'},30000: {'label': '30K'}
+                                            }
                                         ),
                                     ]
                                 ),
                                 dbc.FormGroup(id='wrapper_duration',
                                     children=[
-                                        dbc.Label("Duration", html_for="durationInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.Label("Duration", html_for="durationInput"),
                                         dbc.InputGroup(
                                             [
                                                 dbc.InputGroupAddon("Months", addon_type="prepend"),
-                                                dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=0, debounce=True, className='form-control'),                                   
+                                                dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=0, className='bg-secondary')                               
                                             ],
-                                            className="mb-2",
                                             ),
                                         dcc.Slider(id='durationSlider',min=12,max=84,value=24,step=1,updatemode='drag',
-                                            marks={
-                                                12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
-                                            },
-                                            tooltip = 'always_visible',
+                                            marks={12: {'label': '12M'},24: {'label': '24M'},36: {'label': '36M'},48: {'label': '48M'},60: {'label': '60M'},72: {'label': '72M'},84: {'label': '84M'}
+                                            }
                                         ),
                                     ]
                                 ),
                                 dbc.FormGroup(id='wrapper_rate',
                                     children=[
-                                        dbc.Label("Annual rate", html_for="rateInput", className='font-weight-bold text-gray-800 mb-2'),
+                                        dbc.Label("Annual rate", html_for="rateInput"),
                                         dbc.InputGroup(
                                             [
                                                 dbc.InputGroupAddon("%", addon_type="prepend"),
-                                                dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=200, debounce=True, className='form-control'),    
-                                                                            
+                                                dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=200, className='bg-secondary')                             
                                             ],
                                             className="mb-2",
                                             ),
@@ -106,37 +107,34 @@ app.layout = html.Div(
                                             marks={
                                                 0: {'label': '0%'},100: {'label': '1%'},200: {'label': '2%'},300: {'label': '3%'}, 400: {'label': '4%'}, 500: {'label': '5%'}
                                             },
-                                            tooltip = 'always_visible',
                                         ),
                                     ]
                                 ),                    
-                            ]
+                            ], className = 'bg-body'
                         ),
                     ],
-                    className='card border-left-primary shadow mb-4'
+                    className='card border-light mb-3'
                 ),
                 dbc.Card(
                     [
-                        dbc.CardHeader("Your monthly rent", className="card-title font-weight-bold text-secondary"),
+                        dbc.CardHeader("Your monthly rent", className="card-title font-weight-bold bg-primary"),
                         dbc.CardBody(
                             [
-                                dbc.Jumbotron(
-                                    [  
                                         dbc.Alert(
                                             [
-                                                html.Div(id='result', className='h2 text-center my-auto font-weight-bold')
+                                                html.Div(id='result', className='h2 text-center text-dark my-auto font-weight-bold'),
                                             ],
-                                            color="warning"
+                                            color="warning",
+                                            className = 'mb-4 mt-2'
                                         ),
-                                        html.Hr(className="my-4 d-none d-md-block"),
                                         dbc.Alert(
                                             [
                                                 html.Img(src="../staticfiles/img/advance.png", alt='formula', className='img-fluid text-center my-auto')
                                             ],
-                                            color='secondary',
+                                            color='light',
                                             id='formula',
+                                            className = 'mb-4'
                                         ),
-                                        html.Hr(className="my-4 d-none d-md-block"),
                                         dbc.Alert(
                                             [
                                              dbc.Label("Payments in:", className='font-weight-bold'),
@@ -151,7 +149,8 @@ app.layout = html.Div(
                                                 ),
 
                                             ],
-                                            color="light"
+                                            color="light",
+                                            className='text-dark mb-4'
                                         ),
                                         dbc.Alert(
                                             [
@@ -166,23 +165,21 @@ app.layout = html.Div(
                                                     inline=True,
                                                 ),
                                             ],
-                                            color="light d-none d-md-block"
+                                            color="light",
+                                            className='text-dark d-none d-md-block'
                                         ),
-                                    ]
-                                ),
-                            ]
+                            ], className = 'bg-body'
                         ),
                     ],
-                    className='card border-left-warning shadow mb-4'
+                    className='card border-warning mb-3'
                 ),
             ]
         ),
-
         html.Div(id='table-container',
             children=[
                 dbc.Card(
                     [
-                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold text-secondary"),
+                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold text-white bg-primary"),
                         dbc.CardBody(
                             [
                                 dct.DataTable(
@@ -196,36 +193,45 @@ app.layout = html.Div(
                                     ),
                                     data=[],
                                     editable= True,
+                                    style_cell={
+                                        'backgroundColor': '#888'
+                                    },
                                     style_data_conditional=[
-                                        {'if': {'row_index': 'odd'},'backgroundColor': 'rgb(248, 248, 248)'}
+                                        {
+                                            'if': {'row_index': 'odd'},
+                                            'backgroundColor': '#444'
+                                        },
                                     ],
                                     style_header={
-                                        'backgroundColor': 'rgb(230, 230, 230)','fontWeight': 'bold'
-                                    }
+                                        'backgroundColor': '#375a7f',
+                                        'fontWeight': 'bold'
+                                    },
+                                    style_table={'font-size': '1.2rem'}
                                 ),
                             ]
                         ),
                     ],
-                    className='d-none d-md-block card border-left-secondary shadow mb-4',
+                    className='d-none d-md-block card border-light mb-3 text-dark',
                 ),
             ]
         ),
 
         dbc.Card(
             [
-                dbc.CardHeader("Your graph", className="card-title font-weight-bold text-secondary"),
+                dbc.CardHeader("Your graph", className="card-title font-weight-bold text-white bg-primary"),
                 dbc.CardBody(
                     [
                         dcc.Graph(id='graph',figure=fig)
-                    ]
+                    ],
+                 
                 ),
             ],
-            className='d-none d-md-block card border-left-secondary shadow mb-4'
+            className='d-none d-md-block card border-light mb-3 bg-body'
         ),
 
         dbc.Card(
             [
-                dbc.CardHeader("Your schedule", className="card-title font-weight-bold text-secondary"),
+                dbc.CardHeader("Your schedule", className="card-title font-weight-bold text-white bg-primary"),
                 dbc.CardBody(
                     [
                         dct.DataTable(id='schedule',
@@ -237,23 +243,26 @@ app.layout = html.Div(
                                 ],
                             page_size=12,
                             export_format="csv",
+                            style_cell={
+                                'backgroundColor': '#888'
+                            },
                             style_data_conditional=[
                                 {
                                     'if': {'row_index': 'odd'},
-                                    'backgroundColor': '#f8f9fc'
+                                    'backgroundColor': '#444'
                                 },
                             ],
                             style_header={
-                                'backgroundColor': 'rgb(230, 230, 230)',
+                                'backgroundColor': '#375a7f',
                                 'fontWeight': 'bold'
                             },
                             style_table={'font-size': '1.2rem'}
                         )
                     ],
-                    className = 'mb-4'
+                    className = 'mb-4 bg-body'
                 ),
             ],
-            className='d-none d-md-block card border-left-secondary shadow mb-4'
+            className='d-none d-md-block card border-light mb-3 bg-body'
         ),
     ]
 )
@@ -281,17 +290,16 @@ def amount_update(valueInput, valueSlider, **kwargs):
         valueForslider = int(valueInput)
 
     return[                
-        dbc.Label("Financed amount", html_for="amountInput", className='font-weight-bold text-gray-800 mb-2'),
+        dbc.Label("Financed amount", html_for="amountInput", className='mb-2'),
         dbc.InputGroup(
             [
                 dbc.InputGroupAddon("€", addon_type="prepend"),
-                dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=valueForinput, debounce=True, className='form-control'),                             
+                dbc.Input(id="amountInput", type="text", min=10000, max=100000, step=1000,value=valueForinput, debounce=True, className='form-control bg-secondary text-white font-weight-bold'),                             
             ],
             className="mb-2",
             ),
         dcc.Slider(id='amountSlider',min=10000,max=100000,value=valueForslider,step=1000,updatemode='drag',
-            marks={
-                10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
+            marks={10000: {'label': '10K'},20000: {'label': '20K'},40000: {'label': '40K'},50000: {'label': '50K'},60000: {'label': '60K'},80000: {'label': '80K'},100000: {'label': '100K'}
             },
             tooltip = 'always_visible',
         ),
@@ -321,11 +329,11 @@ def rv_update(valueInput, valueSlider, **kwargs):
         valueForslider = int(valueInput)
 
     return [
-        dbc.Label("Residual value", html_for="rvInput", className='font-weight-bold text-gray-800 mb-2'),
+        dbc.Label("Residual value", html_for="rvInput", className='mb-2'),
         dbc.InputGroup(
             [
                 dbc.InputGroupAddon("€", addon_type="prepend"),
-                dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=valueForinput, debounce=True, className='form-control'),                                
+                dbc.Input(id="rvInput", type="text", min=0, max=30000, step=1000,value=valueForinput, debounce=True, className='form-control bg-secondary text-white font-weight-bold'),                                
             ],
             className="mb-2",
             ),
@@ -359,11 +367,11 @@ def duration_update(valueInput, valueSlider, **kwargs):
         valueForslider = valueInput
 
     return [
-        dbc.Label("Duration", html_for="durationInput", className='font-weight-bold text-gray-800 mb-2'),
+        dbc.Label("Duration", html_for="durationInput", className='mb-2'),
         dbc.InputGroup(
             [
                 dbc.InputGroupAddon("Months", addon_type="prepend"),
-                dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=valueForinput, debounce=True, className='form-control'),                                   
+                dbc.Input(id="durationInput", type="text", min=0, max=30000, step=1000,value=valueForinput, debounce=True, className='form-control bg-secondary text-white font-weight-bold'),                                   
             ],
             className="mb-2",
             ),
@@ -400,11 +408,11 @@ def rate_update(valueInput, valueSlider, **kwargs):
         valueForslider = valueInput
 
     return [
-        dbc.Label("Annual rate", html_for="rateInput", className='font-weight-bold text-gray-800 mb-2'),
+        dbc.Label("Annual rate", html_for="rateInput"),
         dbc.InputGroup(
             [
                 dbc.InputGroupAddon("%", addon_type="prepend"),
-                dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=valueForinput, debounce=True, className='form-control'),    
+                dbc.Input(id="rateInput", type="text", min=0, max=500, step=10,value=valueForinput, debounce=True, className='form-control bg-secondary text-white font-weight-bold'),    
                                             
             ],
             className="mb-2",
@@ -557,40 +565,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
     df= pd.DataFrame(d, columns=["date", "rent", "balance"])
     return df.to_dict('rows')
 
-# Alimentation de la carte resultat
-@app.expanded_callback(
-    Output('result', 'children'),
-        [
-            Input('schedule', 'data'),
-            Input('manual_rents', 'data'),
-            Input('mode', 'value'),
-         ]
-    )
-def update_result(scheduleRows, manuals, modeValue, **kwargs):
-    a=0
-    i=1
-    months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-    # calcul du total des loyers manuels
-    manualSum = 0
-    manualNb = 0
-    for manual in manuals:
-        for k in months:
-            if (manual[k] != None) and str(manual[k]).isnumeric():
-                manualSum = manualSum + manual[k]
-                manualNb = manualNb + 1
-    # calcul du total de tous les loyers
-    globalSum = 0
-    globalNb = 0
-    for scheduleRow in scheduleRows:
-        globalSum = globalSum + float(scheduleRow['rent'])
-        globalNb = globalNb + 1
-    # calcul du total des loyers non manuels
-    calcSum = globalSum - manualSum
-    calclNb = globalNb - manualNb
-    # calcul et affichage du loyer non manuel
-    return ['€ {:0,.1f}'.format(float(calcSum/calclNb))]
-    return dash.no_update
-
 # Alimentation du graphique
 @app.expanded_callback(
     Output('graph', 'figure'),
@@ -611,19 +585,22 @@ def update_graph(rows, **kwargs):
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     # Add traces
     fig.add_trace(
-        go.Scatter(x=crdx, y=crdy, name="Balance", marker_color='#f6c23e', mode='markers'),
+        go.Scatter(x=rentx, y=renty, name="Rent", marker_color='#f6c23e', mode='markers', marker_size=12),
         secondary_y=True,
     )
     fig.add_trace(
-        go.Bar(x=rentx, y=renty, name="Rent", marker_color='#858796'),
+        go.Bar(x=crdx, y=crdy, name="Balance", marker_color='#858796'),
         secondary_y=False,
     )
     fig.update_layout(
-        title_text="Balance and rent amounts"
-    )
+        title_text="Balance and rent amounts",
+        plot_bgcolor= graphcolors['background'],
+        paper_bgcolor = graphcolors['background'],
+        font = {'color': graphcolors['text']}
+    ),
     # Set y-axes titles
-    fig.update_yaxes(title_text="<b>Balance</b>", secondary_y=True)
-    fig.update_yaxes(title_text="<b>Rent</b>", secondary_y=False)
+    fig.update_yaxes(title_text="<b>Rent</b>", secondary_y=True)
+    fig.update_yaxes(title_text="<b>Balance</b>", secondary_y=False)
 
     return fig
 
@@ -656,14 +633,19 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
                 return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
   ]
+        customer = get_object_or_404(Customer, pk=1)
+        contract = Contract()
+        contract.customer = customer
+        contract.user = user
+        contract.save()
         schedule = Schedule()
-        schedule.contract = 1
+        schedule.contract = contract
         schedule.mode = modeValue
         schedule.rv = rvValue
         schedule.amount = amountValue
         schedule.start_date = startdate
         schedule.rate = rateValue/120000
-        #schedule.save()
+        schedule.save()
         i=0
         for scheduleRow in scheduleRows:
             if (modeValue=='01') :
@@ -676,7 +658,7 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
             step.rent = scheduleRow['rent']
             step.balance = scheduleRow['balance']
             step.date = date
-            #step.save()
+            step.save()
 
         return [
                 html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
@@ -696,4 +678,38 @@ def update_formula(modeValue, **kwargs):
     if modeValue == 2:
         formule = '../staticfiles/img/arrear.png'
     return [html.Img(src=formule, alt='formula', className='img-fluid text-center my-auto')]
+    return dash.no_update
+
+# Alimentation de la carte resultat
+@app.expanded_callback(
+    Output('result', 'children'),
+        [
+            Input('schedule', 'data'),
+            Input('manual_rents', 'data'),
+            Input('mode', 'value'),
+         ]
+    )
+def update_result(scheduleRows, manuals, modeValue, **kwargs):
+    a=0
+    i=1
+    months = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+    # calcul du total des loyers manuels
+    manualSum = 0
+    manualNb = 0
+    for manual in manuals:
+        for k in months:
+            if (manual[k] != None) and str(manual[k]).isnumeric():
+                manualSum = manualSum + manual[k]
+                manualNb = manualNb + 1
+    # calcul du total de tous les loyers
+    globalSum = 0
+    globalNb = 0
+    for scheduleRow in scheduleRows:
+        globalSum = globalSum + float(scheduleRow['rent'])
+        globalNb = globalNb + 1
+    # calcul du total des loyers non manuels
+    calcSum = globalSum - manualSum
+    calclNb = globalNb - manualNb
+    # calcul et affichage du loyer non manuel
+    return "€ {0:5.1f}".format(float(calcSum/calclNb))
     return dash.no_update

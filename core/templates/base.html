@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,22 +8,13 @@
   <meta name="description" content="Lease quote calculation">
   <meta name="keywords" content="lease leasing quote calculation">
   <meta name="yarig" content="lease quote">
-  
 
   {% load plotly_dash%}
-  {% load static%}
-
-  {# Load the tag library #}
+  {% load static %}
   {% load bootstrap4 %}
-  
-  {# Load CSS and JavaScript #}
-  {% bootstrap_css %}
-  {% bootstrap_javascript jquery='full' %}
-  
-  {# Display django.contrib.messages as Bootstrap alerts #}
   {% bootstrap_messages %}
 
-  <title>Lease solver</title>
+  <title>{% block title%}Lease solver{% endblock%}</title>
 
   <link href="{% static 'favicon.ico' %}" rel='icon'>
 
@@ -35,235 +25,133 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
   {% endblock%}
 
-   <!-- Custom styles for this template-->
-   {% block app_header_css%}
-   <link rel="stylesheet" href="{% static 'css/sb-admin-2.min.css' %}">
-   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-   {% endblock%}
-   {% plotly_header%}
-   <title>{% block title%}{% endblock%}</title>
+  <!-- Custom styles for this template-->
+  {% block app_header_css%}
+  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% endblock%}
+
+  {% plotly_header%}
 
 </head>
 
+
 <body id="page-top">
 
-  <!-- Page Wrapper -->
-  <div id="wrapper">
-
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{%url 'home' %}">
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-calculator"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">Lease solver</div>
-      </a>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider my-0">
-
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-      <a class="nav-link" href="{%url 'home' %}">
-        <i class="fas fa-anchor"></i>
-        <span>By Yarig</span></a>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-      Main
-    </div>
-
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-      <a class="nav-link" href="{%url 'quote:create_quote' %}">
-        <i class="fas fa-calculator"></i>
-        <span>Direct quote</span></a>
-    </li>
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-      <a class="nav-link" href="{%url 'quote:create_reverse' %}">
-        <i class="fas fa-calculator"></i>
-        <span>Reverse quote</span></a>
-    </li>
-
-    <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-        <i class="fas fa-fw fa-chart-line"></i>
-        <span>Dashboard</span>
-      </a>
-      <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Dashboard pages:</h6>
-          <a class="collapse-item" href="{%url 'core:customer_list' %}">Customer List</a>
-          <a class="collapse-item" href="{%url 'core:contract_list' %}">Contract List</a>
-        </div>
-      </div>
-    </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading -->
-      <div class="sidebar-heading">
-        Access
-      </div>
-
-      <!-- Nav Item - Tables -->
-      <li class="nav-item">
-        <a class="nav-link" href="{%url 'core:login' %}">
-          <i class="fas fa-sign-in-alt"></i>
-          <span>Login</span></a>
-      </li>
-
-      <!-- Nav Item - Tables -->
-      <li class="nav-item">
-        <a class="nav-link" href="{%url 'core:logout' %}">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider d-none d-md-block">
-
-      <!-- Sidebar Toggler (Sidebar) -->
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-
-    </ul>
-    <!-- End of Sidebar -->
-
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-
-      <!-- Main Content -->
-      <div id="content">
-
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-          <!-- Sidebar Toggle (Topbar) -->
-          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
-          </button>
-
-          <!-- Topbar Search -->
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                  <i class="fas fa-search fa-sm"></i>
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-search fa-fw"></i>
+    {% block header %}
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <a class="navbar-brand" href="#">Lease solver</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{%url 'home' %}">Home<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{%url 'core:dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Quotes
               </a>
-              <!-- Dropdown - Messages -->
-              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                <form class="form-inline mr-auto w-100 navbar-search">
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search fa-sm"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{%url 'quote:create_quote' %}">Direct quote</a>
+                <a class="dropdown-item" href="{%url 'quote:create_reverse' %}">Reverse quote</a>
               </div>
             </li>
-
-            <div class="topbar-divider d-none d-sm-block"></div>
-
-            <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown no-arrow">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Yarig</span>
-                <img class="img-profile rounded-circle" src="{% static 'yarig.ico' %}" alt='Yarig logo'>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Customers
               </a>
-              <!-- Dropdown - User Information -->
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Activity Log
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{%url 'core:logout' %}" data-toggle="modal" data-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
-                </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{%url 'core:customers_list' %}">Customer List</a>
+                <a class="dropdown-item" href="{%url 'core:customer_new' %}">Create customer</a>
               </div>
             </li>
-
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Contracts
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="{%url 'core:contracts_list' %}">Contract List</a>
+                <a class="dropdown-item" href="{%url 'core:contract_new' %}">Create contract</a>
+              </div>
+            </li>
           </ul>
-
-        </nav>
-        <!-- End of Topbar -->
-
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
-
-          {% block content%}{% endblock%}
-        
+          
+        {% if user.is_authenticated %}
+        <form class="form-inline my-2 my-lg-0">
+          <a href="{%url 'core:logout' %}" class="btn btn-outline-danger my-2 my-sm-0" type="submit">Logout</a>
+        </form>
+        {% else %}
+          <form class="form-inline my-2 my-lg-0">
+            <a href="{%url 'core:login' %}" class="btn btn-outline-warning my-2 my-sm-0" type="submit">Login</a>
+          </form>
+        {% endif %}
         </div>
-      <!-- End of Main Content -->
+      </nav>
+  {% endblock header %}
 
-      <!-- Footer -->
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Yarig Lease solver 2020    -   Thanks to Django - Bootstrap4 - SB Admin 2 template - Plotly Dash - Django Plotly Dash </span>
-          </div>
-        </div>
-      </footer>
-      <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-
+  <!-- Begin Page Content -->
+  <div class="container">
+    {% block content%}{% endblock%}
   </div>
-  <!-- End of Page Wrapper -->
+  <!-- End of Main Content -->
 
   <!-- Scroll to Top Button-->
+
   <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
+      <i class="fas fa-2x fa-angle-up"></i>
+    </a>
 
 
-  <!-- Custom scripts for all pages-->
-  <script src="{%static 'js/sb-admin-2.min.js' %}"></script>
-  <script src="{%static 'js/jquery.easing.min.js' %}"></script>
-
-
-
+    {% plotly_footer%}
+    
+  <!-- Footer -->
+  <footer class="sticky-footer">
+    <div class="bg-secondary">
+      <div class="copyright text-center my-4">
+        <br>
+        <span>Yarig Lease solver 2020    -   Thanks to Django / Bootstrap4 / Plotly Dash / Django Plotly Dash / Bootswatch Darkly</span>
+        <br>
+        <br>
+      </div>
+    </div>
+  </footer>
+  <!-- End of Footer -->
 
 </body>
 
-{% plotly_footer%}
+{% bootstrap_javascript jquery='full' %}
+
+<script>
+
+      // Navbar active item
+      $(".navbar .nav-item").removeClass('active');
+      $('a[href="'+location.pathname+'"]').closest('li').addClass('active');
+
+      // Scroll to top button appear
+      $(document).on('scroll', function() {
+        var scrollDistance = $(this).scrollTop();
+        if (scrollDistance > 100) {
+          $('.scroll-to-top').fadeIn();
+        } else {
+          $('.scroll-to-top').fadeOut();
+        }
+      });
+
+      // Smooth scrolling using jQuery easing
+      $(document).on('click', 'a.scroll-to-top', function(e) {
+        var $anchor = $(this);
+        $('html, body').stop().animate({
+          scrollTop: ($($anchor.attr('href')).offset().top)
+        }, 1000, 'easeInOutExpo');
+        e.preventDefault();
+      });
+
+
+</script>
+
 </html>

@@ -11,23 +11,27 @@ else:
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    idcard = models.CharField(max_length=9)
-    email = models.EmailField()
-    birth_date = models.DateField(null=True, blank=True)
-    phone = models.CharField(max_length=20)
-    city = models.CharField(max_length=20, default="Paris")
+    PARIS = 'Paris'
+    MUNICH = 'Munich'
+    BORDEAUX = 'Bordeaux'
+    LORIENT = 'Lorient'
+    CITY_CHOICES = [
+        (PARIS, 'Paris'),
+        (MUNICH, 'Munich'),
+        (BORDEAUX, 'Bordeaux'),
+        (LORIENT, 'Lorient'),
+    ]
+    city = models.CharField(max_length=99,
+        choices=CITY_CHOICES,
+        default=LORIENT,)
 
     def __str__(self):
-        return '%s %s %s' % (self.id,self.first_name,self.last_name)
+        return '%s %s' % (self.id,self.city)
         
 
 class Contract(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField(default=100000)
-    rv = models.PositiveIntegerField(default=0)
-    creation_date = models.DateField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True,)
     PENDING = 'Pending'
     APPROVED = 'Approved'
     DECLINED = 'Declined'
@@ -42,9 +46,10 @@ class Contract(models.Model):
     status_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return '%s %s' % (self.id,self.status)
 
 class Schedule(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     amount = models.FloatField()
     rv = models.FloatField()
     rate = models.FloatField()
@@ -58,7 +63,6 @@ class Schedule(models.Model):
     mode = models.CharField(max_length=9,
         choices=MODE_CHOICES,
         default=ADVANCED,)
-
 
     def __str__(self):
         return str(self.id)

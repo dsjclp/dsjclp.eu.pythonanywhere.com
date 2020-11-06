@@ -1,16 +1,44 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<!-- Card Body -->
-<div class="card-body">
-  <div class="chart-area">
-<ul>
-  Contract content
-<li> Reference id: {{ contract.id }}</li>
-<li> Amount: {{ contract.id }}</li>
-<li> Status: {{ contract.status }}</li>
-</ul>
+<!-- Content Row -->
+<div class="row">
+  <!-- Area Chart -->
+  <div class="col-xl-12 col-lg-12">
+    <div class="card shadow mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary">
+        <h6 class="m-0 font-weight-bold ">Contract {{ contract.id }} schedules</h6>
+      </div>
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="chart-area">
+         <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Reference id</th>
+                  <th>Amount</th>
+                  <th>RV</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for schedule in schedules %}
+                  <tr>
+                    <td>{{ schedule.id }}</td>
+                    <td>{{ schedule.amount }}</td>
+                    <td>{{ schedule.rv }}</td>
+                    <td><a href="{% url 'core:schedule_detail' schedule.id %}"><i class="material-icons">see</i></a></td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
         

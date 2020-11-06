@@ -1,26 +1,28 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 {% load bootstrap4 %}
 
-<h1>Key in new contract</h1>
-
-<div class="card bg-light border-dark">
-    <div class="card-body">
-
-        <form action="{% url 'core:contract_new' %}" method="post" class="form">
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            {% buttons %}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            {% endbuttons %}
-        </form>
-
-    </div>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="h3 mb-0">New contract</div>
 </div>
 
-{% endblock content %}
+{% if user.is_authenticated %}
+    <div class="card bg-secondary border-dark">
+        <div class="card-body">
+            <form action="{% url 'core:contract_new' %}" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                {% endbuttons %}
+            </form>
+        </div>
+{% else %}
+    <h5 class="center-align">Please log in to access this page.</h5>
+    <a class="btn btn-warning login-btn mb-3" href="{%url 'core:login' %}">Login</a>
+{% endif %}
 
+{% endblock content %}
 {% block extrascripts %}
 {% endblock extrascripts %}

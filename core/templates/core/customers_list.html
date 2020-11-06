@@ -3,19 +3,19 @@
 
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Customers</h1>
+    <div class="h3 mb-0">Customers</div>
   </div>
 
   {% if user.is_authenticated %}
   
   <!-- Content Row -->
   <div class="row">
-    <!-- Area Chart -->
+
     <div class="col-xl-12 col-lg-12">
-      <div class="card shadow mb-4">
+      <div class="card mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Customer List</h6>
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary">
+          <h6 class="m-0 font-weight-bold">Your customers</h6>
           <div class="dropdown no-arrow">
             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -34,32 +34,26 @@
           <div class="chart-area">
             <a href="{% url 'core:customer_new'  %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mb-4"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add customer</a>
             <div class="table-responsive">
-              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <table class="table table-bordered table-striped table-dark" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                   <tr>
                     <th>Reference id</th>
-                    <th>First name</th>
-                    <th>Last name</th>
-                    <th>Email</th>
+                    <th>City</th>
                     <th>Link</th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
                     <th>Reference id</th>
-                    <th>First name</th>
-                    <th>Last name</th>
-                    <th>Email</th>
+                    <th>City</th>
                     <th>Link</th>
                   </tr>
                 </tfoot>
                 <tbody>
-                  {% for customer in customer_list %}
+                  {% for customer in customers %}
                     <tr>
                       <td>{{ customer.id }}</td>
-                      <td>{{ customer.first_name }}</td>
-                      <td>{{ customer.last_name }}</td>
-                      <td>{{ customer.email }}</td>
+                      <td>{{ customer.city }}</td>
                       <td><a href="{% url 'core:customer_detail' customer.id %}"><i class="material-icons">see</i></a></td>
                     </tr>
                     {% endfor %}

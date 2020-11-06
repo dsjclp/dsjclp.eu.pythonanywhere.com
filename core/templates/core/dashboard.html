@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{%block content%}
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+  <h1 class="h3 mb-0">Dashboard</h1>
+</div>
+
+  {% if user.is_authenticated %}
+    {%load plotly_dash%}
+    {%plotly_direct name="DashboardApp"%}
+  {% else %}
+    <h5 class="center-align">Please log in to access this page.</h5>
+    <a class="btn btn-warning login-btn mb-3" href="{%url 'core:login' %}">Login</a>
+  {% endif %}
+
+{% endblock %}

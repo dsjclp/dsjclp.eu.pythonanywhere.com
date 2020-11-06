@@ -1,21 +1,24 @@
-
-.rc-slider-rail {
-	background-color: #858796;
+.bg-body {
+	background-color: #222; !important;
+  }
+ 
+  .rc-slider-rail {
+	background-color: #adb5bd;
 }
 
 .rc-slider-track {
 
-	background-color: #4e73df;
+	background-color: #375a7f;
 }
 
 
 .rc-slider-handle {
 	height: 12px;
-	background-color: #4e73df;
+	background-color: #375a7f;
 }
 
 .export {
-	background-color: #4e73df;
+	background-color: #375a7f;
 	border: none;
 	color: white;
 	padding: 2px 5px;
@@ -25,4 +28,28 @@
 	font-size: 16px;
 	margin: 4px 2px;
 	cursor: pointer;
+  }
+
+
+  .scroll-to-top {
+	position: fixed;
+	right: 1rem;
+	bottom: 2rem;
+	display: none;
+	width: 2.75rem;
+	text-align: center;
+	color: #888;
+	background: #444;
+  }
+  
+  .scroll-to-top:focus, .scroll-to-top:hover {
+	color: white;
+  }
+  
+  .scroll-to-top:hover {
+	background: #444;
+  }
+  
+  .fa-2x {
+	vertical-align: middle;
   }
