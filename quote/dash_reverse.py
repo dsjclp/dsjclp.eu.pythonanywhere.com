@@ -38,7 +38,7 @@ app.layout = html.Div(
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
                 html.Div('Reverse quote', className='h3 mb-0'),
-                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary"),
             ]
         ),
         dbc.CardDeck(
@@ -179,7 +179,7 @@ app.layout = html.Div(
             children=[
                 dbc.Card(
                     [
-                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold text-white bg-primary"),
+                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold bg-primary"),
                         dbc.CardBody(
                             [
                                 dct.DataTable(
@@ -218,7 +218,7 @@ app.layout = html.Div(
 
         dbc.Card(
             [
-                dbc.CardHeader("Your graph", className="card-title font-weight-bold text-white bg-primary"),
+                dbc.CardHeader("Your graph", className="card-title font-weight-bold bg-primary"),
                 dbc.CardBody(
                     [
                         dcc.Graph(id='graph',figure=fig)
@@ -230,7 +230,7 @@ app.layout = html.Div(
         ),
         dbc.Card(
             [
-                dbc.CardHeader("Your schedule", className="card-title font-weight-bold text-white bg-primary"),
+                dbc.CardHeader("Your schedule", className="card-title font-weight-bold bg-primary"),
                 dbc.CardBody(
                     [
                         dct.DataTable(id='schedule',
@@ -425,6 +425,7 @@ def rate_update(valueInput, valueSlider, **kwargs):
     ]   
     return dash.no_update
 
+
 # Affichage des loyers manuels
 @app.expanded_callback(
     Output('table-container', 'style'),
@@ -564,7 +565,6 @@ def compute_schedule(durationValue, amountValue, rvValue, rows, modeValue, rateV
             crdo.append(crd)
             j=j+1
 
-
 # Alimentation du schedule
     i=0
     if (modeValue=='01') :
@@ -665,15 +665,15 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
     if n is None:
         user = kwargs['user']
         return [
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
-                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary shadow-sm"),
+                html.Div('Reverse quote', className='h3 mb-0'),
+                dbc.Button("Save quote", id="save_quote_button", className="d-none d-md-block btn btn-sm btn-primary"),
         ]
     
         return dash.no_update
     else:
         if n > 1:
                 return [
-                html.Div('Lease quote', className='h3 mb-0 text-gray-800'),
+                html.Div('Reverse quote', className='h3 mb-0'),
   ]
         customer = get_object_or_404(Customer, pk=1)
         contract = Contract()
@@ -721,3 +721,14 @@ def update_formula(modeValue, **kwargs):
         formule = '../staticfiles/img/arrear.png'
     return [html.Img(src=formule, alt='formula', className='img-fluid text-center my-auto')]
     return dash.no_update
+
+# Activation du bouton save
+@app.expanded_callback(
+    Output('save_quote_button', 'disabled'),
+    [Input('amountInput', 'value')])
+def show_button(on_off, **kwargs):
+    user = kwargs['user']
+    if user.is_authenticated:
+        return False
+    else:
+        return True
