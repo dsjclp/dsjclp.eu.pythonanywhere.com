@@ -68,18 +68,80 @@ rootLayout = html.Div([
 ])
 
 
-ledLayout = html.Div(
+led1Layout = html.Div(
     [
-        daq.LEDDisplay(
-            value="3.14",
-            color=theme['primary'],
-            className='dark-theme-control justify-content-center'
+        daq.Indicator(
+        value=False,
+        color=theme['primary'],
+        className='dark-theme-control'
         ),
-        html.Div('Status', className='h3 mb-0 text-center text-light'),
-    ],className='justify-content-center mb-2'
+        html.Br(),
+        daq.LEDDisplay(
+            value="0322",
+            color=theme['primary'],
+            className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Deals created', className='h4 mb-0 text-center text-light'),
+    ],className='mb-4'
 )
 
-gaugeLayout = html.Div(
+led2Layout = html.Div(
+    [
+        daq.Indicator(
+        value=False,
+        color=theme['primary'],
+        className='dark-theme-control'
+        ),
+        html.Br(),
+        daq.LEDDisplay(
+            value="0066",
+            color=theme['primary'],
+            className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Deals validated', className='h4 mb-0 text-center text-light'),
+    ],className='mb-4'
+)
+
+led3Layout = html.Div(
+    [
+        daq.Indicator(
+        value=True,
+        color=theme['primary'],
+        className='dark-theme-control'
+        ),
+        html.Br(),
+        daq.LEDDisplay(
+            value="0034",
+            color=theme['primary'],
+            className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Deals activated', className='h4 mb-0 text-center text-light'),
+    ],className='mb-4'
+)
+
+gauge1Layout = html.Div(
+    [
+    daq.Gauge(
+        min=0,
+        max=10,
+        value=8,
+        color=theme['primary'],
+        className='dark-theme-control'
+        ),
+        html.Br(),
+        daq.GraduatedBar(
+        value=8,
+        color=theme['primary'],
+        className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Validation leadtime', className='h4 mb-0 text-center text-light'),
+    ],className='justify-content-center'
+)
+gauge2Layout = html.Div(
     [
     daq.Gauge(
         min=0,
@@ -89,17 +151,32 @@ gaugeLayout = html.Div(
         className='dark-theme-control'
         ),
         html.Br(),
-        daq.Indicator(
-        value=True,
+        daq.GraduatedBar(
+        value=6,
+        color=theme['primary'],
+        className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Activation leadtime', className='h4 mb-0 text-center text-light'),
+    ],className='justify-content-center'
+)
+gauge3Layout = html.Div(
+    [
+    daq.Gauge(
+        min=0,
+        max=10,
+        value=2,
         color=theme['primary'],
         className='dark-theme-control'
         ),
         html.Br(),
         daq.GraduatedBar(
-        value=4,
+        value=2,
         color=theme['primary'],
         className='dark-theme-control'
         ),
+        html.Br(),
+        html.Div('Cancellation %', className='h4 mb-0 text-center text-light'),
     ],className='justify-content-center'
 )
 
@@ -111,31 +188,29 @@ app.layout = html.Div(
     [
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Your dashboard', className='h3 mb-0 text-gray-800'),
+                html.Div('Your figures', className='h3 mb-0'),
                 daq.ToggleSwitch(id='toggle-theme', label=['Light', 'Dark'], value=True),
             ]
         ),
         dbc.Row(
             [
-                daq.DarkThemeProvider(theme=theme, children=ledLayout),
-                daq.DarkThemeProvider(theme=theme, children=ledLayout),
-                daq.DarkThemeProvider(theme=theme, children=ledLayout),
-                daq.DarkThemeProvider(theme=theme, children=ledLayout)
+                daq.DarkThemeProvider(theme=theme, children=led1Layout),
+                daq.DarkThemeProvider(theme=theme, children=led2Layout),
+                daq.DarkThemeProvider(theme=theme, children=led3Layout),
             ],
             id='dark-theme-components',
-            className = 'd-flex justify-content-between',
+            className = 'd-flex justify-content-around',
             style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
         ),
  
         dbc.Row(
             [
-                daq.DarkThemeProvider(theme=theme, children=gaugeLayout),
-                daq.DarkThemeProvider(theme=theme, children=gaugeLayout),
-                daq.DarkThemeProvider(theme=theme, children=gaugeLayout),
-                daq.DarkThemeProvider(theme=theme, children=gaugeLayout)
+                daq.DarkThemeProvider(theme=theme, children=gauge1Layout),
+                daq.DarkThemeProvider(theme=theme, children=gauge2Layout),
+                daq.DarkThemeProvider(theme=theme, children=gauge3Layout)
             ],
             id='gauge',
-            className = 'd-flex justify-content-between mb-4',
+            className = 'd-none d-md-flex justify-content-around mb-4 ',
             style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
         ),
 
@@ -175,7 +250,7 @@ app.layout = html.Div(
             className='d-none d-md-block card border-light mb-3 bg-body'
         ),
     ],
-    id='contracts', 
+    id='contracts', className = 'mx-2'
 )
 
 
@@ -188,11 +263,11 @@ def switch_bg(dark, currentStyle):
 
     if(dark):
         currentStyle.update(
-            backgroundColor='#303030'
+            backgroundColor='#222'
         )
     else:
         currentStyle.update(
-            backgroundColor='white'
+            backgroundColor='#888'
         )
     return currentStyle
 

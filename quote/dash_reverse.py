@@ -179,7 +179,7 @@ app.layout = html.Div(
             children=[
                 dbc.Card(
                     [
-                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold bg-primary"),
+                        dbc.CardHeader("Your manual rents", className="card-title font-weight-bold text-white bg-primary"),
                         dbc.CardBody(
                             [
                                 dct.DataTable(
