@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from core.models import Schedule
 from core.models import Contract
-
+from django.db.models import  Q, Count
 import dash_daq as daq
 
 
@@ -77,7 +77,8 @@ led1Layout = html.Div(
         ),
         html.Br(),
         daq.LEDDisplay(
-            value="0322",
+            id='led1',
+            value="0000",
             color=theme['primary'],
             className='dark-theme-control'
         ),
@@ -95,7 +96,8 @@ led2Layout = html.Div(
         ),
         html.Br(),
         daq.LEDDisplay(
-            value="0066",
+            id='led2',
+            value="0000",
             color=theme['primary'],
             className='dark-theme-control'
         ),
@@ -113,7 +115,8 @@ led3Layout = html.Div(
         ),
         html.Br(),
         daq.LEDDisplay(
-            value="0034",
+            id='led3',
+            value="0000",
             color=theme['primary'],
             className='dark-theme-control'
         ),
@@ -222,9 +225,12 @@ app.layout = html.Div(
                 dct.DataTable(id='schedules_list',
                             data=[],
                             columns=[
-                                    {'id': 'amount', 'name': 'Amount', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                    {'id': 'rv',  'name': 'RV', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
-                                    {'id': 'rate',  'name': 'Rate', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=2,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'%')},
+                                    {'id': 'id', 'name': 'Id', 'type': 'numeric'},
+                                    {'id': 'status',  'name': 'Status', 'type': 'string'},
+                                    {'id': 'status_date',  'name': 'Status date', 'type': 'date'},
+                                    #{'id': 'amount', 'name': 'Amount', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                    #{'id': 'rv',  'name': 'RV', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=1,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'€')},
+                                    #{'id': 'rate',  'name': 'Rate', 'type': 'numeric', 'format': Format(scheme=Scheme.fixed, precision=2,group=Group.yes,groups=3,group_delimiter='.',decimal_delimiter=',',symbol=Symbol.yes, symbol_prefix=u'%')},
                                 ],
                             page_size=12,
                             export_format="csv",
@@ -254,12 +260,13 @@ app.layout = html.Div(
 )
 
 
-@app.callback(
+# Bascule entre les modes dark et light pour les leds
+@app.expanded_callback(
     dash.dependencies.Output('dark-theme-components', 'style'),
     [dash.dependencies.Input('toggle-theme', 'value')],
     state=[dash.dependencies.State('dark-theme-components', 'style')]
 )
-def switch_bg(dark, currentStyle):
+def switch_bg(dark, currentStyle, **kwargs):
 
     if(dark):
         currentStyle.update(
@@ -272,15 +279,52 @@ def switch_bg(dark, currentStyle):
     return currentStyle
 
 
-@app.callback(
+# Mise à jour de la led created
+@app.expanded_callback(
+    Output('led1', 'value'),
+    [Input('toggle-theme', 'value')]
+)
+def update_led(dark, **kwargs):
+    user = kwargs['user']
+    val = Contract.objects.filter(user=user).count()
+    val = str(val).zfill(4)
+    return val
+
+# Mise à jour de la led validated
+@app.expanded_callback(
+    Output('led2', 'value'),
+    [Input('toggle-theme', 'value')]
+)
+def update_led(dark, **kwargs):
+    user = kwargs['user']
+    status = 'Validated'
+    val = Contract.objects.filter(user=user, status=status).count()
+    val = str(val).zfill(4)
+    return val
+
+# Mise à jour de la led activated
+@app.expanded_callback(
+    Output('led3', 'value'),
+    [Input('toggle-theme', 'value')]
+)
+def update_led(dark, **kwargs):
+    user = kwargs['user']
+    status = 'Activated'
+    val = Contract.objects.filter(user=user, status=status).count()
+    val = str(val).zfill(4)
+    return val
+
+
+# Mise à jour de la liste des contrats
+@app.expanded_callback(
     Output('schedules_list', 'data'),
     [dash.dependencies.Input('toggle-theme', 'value')],
     state=[dash.dependencies.State('dark-theme-components', 'style')]
 )
-def switch_bg(dark, currentStyle):
+def contract_list_update(dark, currentStyle, **kwargs):
     d = []
-    schedules = Schedule.objects.all()
-    for row in schedules:
-        d.append([row.amount,row.rv, row.rate])
-    df= pd.DataFrame(d, columns=['amount','rv','rate'])
+    contracts = Contract.objects.all()
+    for row in contracts:
+        d.append([row.id,row.status, row.status_date])
+    df= pd.DataFrame(d, columns=['id','status','status_date'])
     return df.to_dict('rows')

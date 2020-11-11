@@ -33,12 +33,12 @@ class Contract(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True,)
     PENDING = 'Pending'
-    APPROVED = 'Approved'
-    DECLINED = 'Declined'
+    VALIDATED = 'Validated'
+    ACTIVATED = 'Activated'
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
-        (APPROVED, 'Approved'),
-        (DECLINED, 'Declined'),
+        (VALIDATED, 'Validated'),
+        (ACTIVATED, 'Activated'),
     ]
     status = models.CharField(max_length=9,
         choices=STATUS_CHOICES,
