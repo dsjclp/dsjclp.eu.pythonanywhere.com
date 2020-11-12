@@ -86,7 +86,6 @@ gauge1Layout = html.Div(
             min=0,
             max=10,
             value=0,
-            color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}},
             className='dark-theme-control'
         ),
         html.Br(),
@@ -100,7 +99,6 @@ gauge2Layout = html.Div(
             min=0,
             max=10,
             value=0,
-            color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}},
             className='dark-theme-control'
         ),
         html.Br(),
@@ -110,23 +108,23 @@ gauge2Layout = html.Div(
 graduate1Layout = html.Div(
     [
         daq.GraduatedBar(
-            value=8,
-            color={"gradient":True,"ranges":{"red":[0,4],"yellow":[4,7],"green":[7,10]}},
+            id='graduate1',
+            value=0,
             className='dark-theme-control'
         ),
         html.Br(),
-        html.Div('Activation : 80%', className='h4 mb-0 text-center text-light'),
+        html.Div('Activation %', className='h4 mb-4 text-center text-light'),
     ]
 )
 graduate2Layout = html.Div(
     [
         daq.GraduatedBar(
-            value=1,
-            color={"gradient":True,"ranges":{"green":[0,4],"yellow":[4,7],"red":[7,10]}},
+            id='graduate2',
+            value=0,
             className='dark-theme-control'
         ),
         html.Br(),
-        html.Div('Cancellation : 10%', className='h4 mb-0 text-center text-light'),
+        html.Div('Cancellation %', className='h4 mb-0 text-center text-light'),
     ]
 )
 
@@ -176,7 +174,7 @@ app.layout = html.Div(
                 daq.DarkThemeProvider(theme=theme, children=graduate2Layout),
             ],
             id='gauge',
-            className = 'd-none d-md-flex justify-content-around mb-4 ',
+            className = 'd-flex justify-content-around mb-4 ',
             style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
         ),
 
@@ -219,7 +217,7 @@ app.layout = html.Div(
             className='d-none d-md-block card border-light mb-3 bg-body'
         ),
     ],
-    id='contracts', className = 'mx-0'
+    id='contracts', className = 'mx-1'
 )
 
 
@@ -334,13 +332,56 @@ def update_gauge_format(on, **kwargs):
         color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}}
     return color
 
-
 # Mise à jour du format de la jauge activation leadtime
 @app.expanded_callback(
     Output('gauge2', 'color'),
     [Input('powerbutton', 'on')]
 )
 def update_gauge_format(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}}
+    return color
+
+# Mise à jour de la graduation activation
+@app.expanded_callback(
+    Output('graduate1', 'value'),
+    [Input('powerbutton', 'on')]
+)
+def update_graduate(on, **kwargs):
+    val = 0
+    if on==True:
+        val = 8
+    return val
+
+# Mise à jour de la graduation cancellation
+@app.expanded_callback(
+    Output('graduate2', 'value'),
+    [Input('powerbutton', 'on')]
+)
+def update_graduate(on, **kwargs):
+    val = 0
+    if on==True:
+        val = 1
+    return val
+    
+# Mise à jour du format de la graduation activation
+@app.expanded_callback(
+    Output('graduate1', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_graduate_format(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color={"gradient":True,"ranges":{"red":[0,6],"yellow":[6,8],"green":[8,10]}}
+    return color
+
+# Mise à jour du format de la graduation cancellation
+@app.expanded_callback(
+    Output('graduate2', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_graduate_format(on, **kwargs):
     color = 'black'
     if on==True:
         color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}}
