@@ -35,10 +35,12 @@ class Contract(models.Model):
     PENDING = 'Pending'
     VALIDATED = 'Validated'
     ACTIVATED = 'Activated'
+    CANCELLED = 'Cancelled'
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
         (VALIDATED, 'Validated'),
         (ACTIVATED, 'Activated'),
+        (CANCELLED, 'Cancelled'),
     ]
     status = models.CharField(max_length=9,
         choices=STATUS_CHOICES,

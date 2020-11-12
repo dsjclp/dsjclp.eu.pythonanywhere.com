@@ -17,70 +17,24 @@ import dash_daq as daq
 
 theme =  {
     'dark': True,
-    'detail': '#f39c12',
+    'detail': '#007439',
     'primary': '#f39c12',
-    'secondary': 'green',
+    'secondary': '#6E6E6E',
 }
-
-rootLayout = html.Div([
-    daq.BooleanSwitch(
-        on=True,
-        id='darktheme-daq-booleanswitch',
-        className='dark-theme-control'
-    ), html.Br(),
-    daq.ToggleSwitch(
-        id='darktheme-daq-toggleswitch',
-        className='dark-theme-control'
-    ), html.Br(),
-
-    daq.GraduatedBar(
-        value=4,
-        color=theme['primary'],
-        id='darktheme-daq-graduatedbar',
-        className='dark-theme-control'
-    ), html.Br(),
-    daq.Indicator(
-        value=True,
-        color=theme['primary'],
-        id='darktheme-daq-indicator',
-        className='dark-theme-control'
-    ), html.Br(),
-
-    daq.PowerButton(
-        on=True,
-        color=theme['primary'],
-        id='darktheme-daq-powerbutton',
-        className='dark-theme-control'
-    ), html.Br(),
-    daq.StopButton(
-        id='darktheme-daq-stopbutton',
-        className='dark-theme-control'
-    ), html.Br(),
-
-    daq.Tank(
-        min=0,
-        max=10,
-        value=5,
-        id='darktheme-daq-tank',
-        className='dark-theme-control'
-    ), html.Br(),
-
-])
-
 
 led1Layout = html.Div(
     [
-        daq.Indicator(
-        value=False,
-        color=theme['primary'],
+    daq.Indicator(
+        value=True,
+        color=theme['detail'],
+        id='darktheme-daq-indicator1',
         className='dark-theme-control'
-        ),
+    ), 
         html.Br(),
         daq.LEDDisplay(
             id='led1',
             value="0000",
-            color=theme['primary'],
-            className='dark-theme-control'
+            className='dark-theme-control',
         ),
         html.Br(),
         html.Div('Deals created', className='h4 mb-0 text-center text-light'),
@@ -89,17 +43,17 @@ led1Layout = html.Div(
 
 led2Layout = html.Div(
     [
-        daq.Indicator(
+    daq.Indicator(
         value=False,
-        color=theme['primary'],
+        color=theme['detail'],
+        id='darktheme-daq-indicator2',
         className='dark-theme-control'
-        ),
+    ), 
         html.Br(),
         daq.LEDDisplay(
             id='led2',
             value="0000",
-            color=theme['primary'],
-            className='dark-theme-control'
+            className='dark-theme-control',
         ),
         html.Br(),
         html.Div('Deals validated', className='h4 mb-0 text-center text-light'),
@@ -108,17 +62,17 @@ led2Layout = html.Div(
 
 led3Layout = html.Div(
     [
-        daq.Indicator(
-        value=True,
-        color=theme['primary'],
+    daq.Indicator(
+        value=False,
+        color=theme['detail'],
+        id='darktheme-daq-indicator3',
         className='dark-theme-control'
-        ),
+    ), 
         html.Br(),
         daq.LEDDisplay(
             id='led3',
             value="0000",
-            color=theme['primary'],
-            className='dark-theme-control'
+            className='dark-theme-control',
         ),
         html.Br(),
         html.Div('Deals activated', className='h4 mb-0 text-center text-light'),
@@ -127,60 +81,53 @@ led3Layout = html.Div(
 
 gauge1Layout = html.Div(
     [
-    daq.Gauge(
-        min=0,
-        max=10,
-        value=8,
-        color=theme['primary'],
-        className='dark-theme-control'
-        ),
-        html.Br(),
-        daq.GraduatedBar(
-        value=8,
-        color=theme['primary'],
-        className='dark-theme-control'
+        daq.Gauge(
+            id='gauge1',
+            min=0,
+            max=10,
+            value=0,
+            color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}},
+            className='dark-theme-control'
         ),
         html.Br(),
         html.Div('Validation leadtime', className='h4 mb-0 text-center text-light'),
-    ],className='justify-content-center'
+    ]
 )
 gauge2Layout = html.Div(
     [
-    daq.Gauge(
-        min=0,
-        max=10,
-        value=6,
-        color=theme['primary'],
-        className='dark-theme-control'
-        ),
-        html.Br(),
-        daq.GraduatedBar(
-        value=6,
-        color=theme['primary'],
-        className='dark-theme-control'
+        daq.Gauge(
+            id='gauge2',
+            min=0,
+            max=10,
+            value=0,
+            color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}},
+            className='dark-theme-control'
         ),
         html.Br(),
         html.Div('Activation leadtime', className='h4 mb-0 text-center text-light'),
-    ],className='justify-content-center'
+    ]
 )
-gauge3Layout = html.Div(
+graduate1Layout = html.Div(
     [
-    daq.Gauge(
-        min=0,
-        max=10,
-        value=2,
-        color=theme['primary'],
-        className='dark-theme-control'
-        ),
-        html.Br(),
         daq.GraduatedBar(
-        value=2,
-        color=theme['primary'],
-        className='dark-theme-control'
+            value=8,
+            color={"gradient":True,"ranges":{"red":[0,4],"yellow":[4,7],"green":[7,10]}},
+            className='dark-theme-control'
         ),
         html.Br(),
-        html.Div('Cancellation %', className='h4 mb-0 text-center text-light'),
-    ],className='justify-content-center'
+        html.Div('Activation : 80%', className='h4 mb-0 text-center text-light'),
+    ]
+)
+graduate2Layout = html.Div(
+    [
+        daq.GraduatedBar(
+            value=1,
+            color={"gradient":True,"ranges":{"green":[0,4],"yellow":[4,7],"red":[7,10]}},
+            className='dark-theme-control'
+        ),
+        html.Br(),
+        html.Div('Cancellation : 10%', className='h4 mb-0 text-center text-light'),
+    ]
 )
 
 
@@ -189,12 +136,19 @@ app = DjangoDash("DashboardApp")
 
 app.layout = html.Div(
     [
+
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('Your figures', className='h3 mb-0'),
-                daq.ToggleSwitch(id='toggle-theme', label=['Light', 'Dark'], value=True),
+                html.Div('', className='h3 mb-0'),
+                daq.PowerButton(
+                    on=False,
+                    color=theme['detail'],
+                    id='powerbutton',
+                    className='dark-theme-control',
+                ),
             ]
         ),
+    
         dbc.Row(
             [
                 daq.DarkThemeProvider(theme=theme, children=led1Layout),
@@ -208,18 +162,27 @@ app.layout = html.Div(
  
         dbc.Row(
             [
-                daq.DarkThemeProvider(theme=theme, children=gauge1Layout),
-                daq.DarkThemeProvider(theme=theme, children=gauge2Layout),
-                daq.DarkThemeProvider(theme=theme, children=gauge3Layout)
+                daq.DarkThemeProvider(children=gauge1Layout),
+                daq.DarkThemeProvider(children=gauge2Layout),
+            ],
+            id='gauge',
+            className = 'd-flex justify-content-around mb-4 ',
+            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
+        ),
+
+        dbc.Row(
+            [
+                daq.DarkThemeProvider(children=graduate1Layout),
+                daq.DarkThemeProvider(theme=theme, children=graduate2Layout),
             ],
             id='gauge',
             className = 'd-none d-md-flex justify-content-around mb-4 ',
             style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
         ),
 
-        dbc.Card(
+        dbc.Row(
             [
-                dbc.CardHeader("Your contracts", className="card-title font-weight-bold text-white bg-primary"),
+                dbc.CardHeader("Your pipeline", className="card-title font-weight-bold text-white bg-primary"),
                 dbc.CardBody(
                     [
                 dct.DataTable(id='schedules_list',
@@ -250,81 +213,150 @@ app.layout = html.Div(
                             style_table={'font-size': '1.2rem'}
                         )
                     ],
-                    className = 'mb-4 bg-body'
+                    className = 'mb-4'
                 ),
             ],
             className='d-none d-md-block card border-light mb-3 bg-body'
         ),
     ],
-    id='contracts', className = 'mx-2'
+    id='contracts', className = 'mx-0'
 )
 
-
-# Bascule entre les modes dark et light pour les leds
-@app.expanded_callback(
-    dash.dependencies.Output('dark-theme-components', 'style'),
-    [dash.dependencies.Input('toggle-theme', 'value')],
-    state=[dash.dependencies.State('dark-theme-components', 'style')]
-)
-def switch_bg(dark, currentStyle, **kwargs):
-
-    if(dark):
-        currentStyle.update(
-            backgroundColor='#222'
-        )
-    else:
-        currentStyle.update(
-            backgroundColor='#888'
-        )
-    return currentStyle
 
 
 # Mise à jour de la led created
 @app.expanded_callback(
     Output('led1', 'value'),
-    [Input('toggle-theme', 'value')]
+    [Input('powerbutton', 'on')]
 )
-def update_led(dark, **kwargs):
-    user = kwargs['user']
-    val = Contract.objects.filter(user=user).count()
-    val = str(val).zfill(4)
+def update_led(on, **kwargs):
+    val = '0000'
+    if on==True:
+        user = kwargs['user']
+        val = Contract.objects.filter(user=user).count()
+        val = str(val).zfill(4)
     return val
 
 # Mise à jour de la led validated
 @app.expanded_callback(
     Output('led2', 'value'),
-    [Input('toggle-theme', 'value')]
+    [Input('powerbutton', 'on')]
 )
-def update_led(dark, **kwargs):
-    user = kwargs['user']
-    status = 'Validated'
-    val = Contract.objects.filter(user=user, status=status).count()
-    val = str(val).zfill(4)
+def update_led(on, **kwargs):
+    val = '0000'
+    if on==True:
+        user = kwargs['user']
+        status = 'Validated'
+        val = Contract.objects.filter(user=user, status=status).count()
+        val = str(val).zfill(4)
     return val
 
 # Mise à jour de la led activated
 @app.expanded_callback(
     Output('led3', 'value'),
-    [Input('toggle-theme', 'value')]
+    [Input('powerbutton', 'on')]
 )
-def update_led(dark, **kwargs):
-    user = kwargs['user']
-    status = 'Activated'
-    val = Contract.objects.filter(user=user, status=status).count()
-    val = str(val).zfill(4)
+def update_led(on, **kwargs):
+    val = '0000'
+    if on==True:
+        user = kwargs['user']
+        status = 'Activated'
+        val = Contract.objects.filter(user=user, status=status).count()
+        val = str(val).zfill(4)
     return val
 
 
-# Mise à jour de la liste des contrats
+# Mise à jour du format de la led created
+@app.expanded_callback(
+    Output('led1', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_led(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color= theme['primary']
+    return color
+
+
+# Mise à jour du format de la led validated
+@app.expanded_callback(
+    Output('led2', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_led(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color= theme['primary']
+    return color
+
+
+# Mise à jour du format de la led activated
+@app.expanded_callback(
+    Output('led3', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_led_format(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color= theme['primary']
+    return color
+
+# Mise à jour de la jauge validation leadtime
+@app.expanded_callback(
+    Output('gauge1', 'value'),
+    [Input('powerbutton', 'on')]
+)
+def update_gauge(on, **kwargs):
+    val = 0
+    if on==True:
+        val = 6
+    return val
+
+# Mise à jour de la jauge activation leadtime
+@app.expanded_callback(
+    Output('gauge2', 'value'),
+    [Input('powerbutton', 'on')]
+)
+def update_gauge(on, **kwargs):
+    val = 0
+    if on==True:
+        val = 3
+    return val
+
+# Mise à jour du format de la jauge validation leadtime
+@app.expanded_callback(
+    Output('gauge1', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_gauge_format(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}}
+    return color
+
+
+# Mise à jour du format de la jauge activation leadtime
+@app.expanded_callback(
+    Output('gauge2', 'color'),
+    [Input('powerbutton', 'on')]
+)
+def update_gauge_format(on, **kwargs):
+    color = 'black'
+    if on==True:
+        color={"gradient":True,"ranges":{"green":[0,6],"yellow":[6,8],"red":[8,10]}}
+    return color
+
+
+# Mise à jour du pipeline
 @app.expanded_callback(
     Output('schedules_list', 'data'),
-    [dash.dependencies.Input('toggle-theme', 'value')],
-    state=[dash.dependencies.State('dark-theme-components', 'style')]
+    [Input('powerbutton', 'on')] 
 )
-def contract_list_update(dark, currentStyle, **kwargs):
-    d = []
-    contracts = Contract.objects.all()
-    for row in contracts:
-        d.append([row.id,row.status, row.status_date])
-    df= pd.DataFrame(d, columns=['id','status','status_date'])
-    return df.to_dict('rows')
+def contract_list_update(on, **kwargs):
+    if on==True:
+        d = []
+        contracts = Contract.objects.exclude(status='Activated')
+        for row in contracts:
+            d.append([row.id,row.status, row.status_date])
+        df= pd.DataFrame(d, columns=['id','status','status_date'])
+        return df.to_dict('rows')
