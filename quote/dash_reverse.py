@@ -289,7 +289,7 @@ def amount_update(valueInput, valueSlider, **kwargs):
         valueForslider = int(valueInput)
 
     return[                
-        dbc.Label("Financed amount", html_for="amountInput", className='mb-2'),
+        dbc.Label("Monthly rent amount", html_for="amountInput", className='mb-2'),
         dbc.InputGroup(
             [
                 dbc.InputGroupAddon("€", addon_type="prepend"),
