@@ -25,7 +25,7 @@ class Customer(models.Model):
         default=LORIENT,)
 
     def __str__(self):
-        return '%s %s' % (self.id,self.city)
+        return str(self.id)
         
 class Contract(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -54,7 +54,7 @@ class Contract(models.Model):
     termination_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
-        return '%s %s' % (self.id,self.status)
+        return str(self.id)
 
 class Schedule(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)

@@ -8,7 +8,7 @@
     <div class="card shadow mb-4">
       <!-- Card Header - Dropdown -->
       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary">
-        <h6 class="m-0 font-weight-bold ">Contract {{ contract.id }} schedules</h6>
+        <h6 class="m-0 font-weight-bold ">Contract #{{ contract.id }} schedules</h6>
       </div>
       <!-- Card Body -->
       <div class="card-body">
@@ -17,7 +17,7 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th>Reference id</th>
+                  <th>Schedule id</th>
                   <th>Amount</th>
                   <th>RV</th>
                   <th>Link</th>
@@ -28,8 +28,8 @@
                 {% for schedule in schedules %}
                   <tr>
                     <td>{{ schedule.id }}</td>
-                    <td>{{ schedule.amount }}</td>
-                    <td>{{ schedule.rv }}</td>
+                    <td>€ {{ schedule.amount|floatformat}}</td>
+                    <td>€ {{ schedule.rv|floatformat }}</td>
                     <td><a href="{% url 'core:schedule_detail' schedule.id %}"><i class="material-icons">see</i></a></td>
                   </tr>
                   {% endfor %}
