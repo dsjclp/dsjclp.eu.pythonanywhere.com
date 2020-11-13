@@ -8,7 +8,6 @@ except ImportError:
 else:
     User = settings.AUTH_USER_MODEL
 
-
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     PARIS = 'Paris'
@@ -28,24 +27,31 @@ class Customer(models.Model):
     def __str__(self):
         return '%s %s' % (self.id,self.city)
         
-
 class Contract(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True,)
-    PENDING = 'Pending'
+    CREATED = 'Created'
     VALIDATED = 'Validated'
     ACTIVATED = 'Activated'
     CANCELLED = 'Cancelled'
+    TERMINATED = 'Terminated'
     STATUS_CHOICES = [
-        (PENDING, 'Pending'),
+        (CREATED, 'Created'),
         (VALIDATED, 'Validated'),
         (ACTIVATED, 'Activated'),
         (CANCELLED, 'Cancelled'),
+        (TERMINATED, 'Terminated'),
     ]
-    status = models.CharField(max_length=9,
+    status = models.CharField(max_length=10,
         choices=STATUS_CHOICES,
-        default=PENDING,)
+        default=CREATED,)
     status_date = models.DateField(null=True, blank=True)
+
+    creation_date = models.DateField(null=True, blank=True)
+    validation_date = models.DateField(null=True, blank=True)
+    activation_date = models.DateField(null=True, blank=True)
+    cancellation_date = models.DateField(null=True, blank=True)
+    termination_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return '%s %s' % (self.id,self.status)
@@ -68,7 +74,6 @@ class Schedule(models.Model):
 
     def __str__(self):
         return str(self.id)
-
 
 class Step(models.Model):
     schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE)

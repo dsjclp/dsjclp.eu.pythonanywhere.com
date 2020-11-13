@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="h3 mb-0">Edit contract</div>
+</div>
+
+    <div class="card bg-secondary border-dark">
+        <div class="card-body">
+            <form action="" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                {% endbuttons %}
+            </form>
+        </div>
+
+{% endblock content %}
+{% block extrascripts %}
+{% endblock extrascripts %}

@@ -1,11 +1,6 @@
 {%extends "base.html"%}
 {%block content%}
 
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-  <h1 class="h3 mb-0">Your dashboard</h1>
-</div>
-
   {% if user.is_authenticated %}
     {%load plotly_dash%}
     {%plotly_direct name="DashboardApp"%}

@@ -21,18 +21,18 @@
               <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-              <div class="dropdown-header">Dropdown Header:</div>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
+              <div class="dropdown-header">Access:</div>
+              <a class="dropdown-item" href="{% url 'core:contract_new'%}">New contract</a>
+              <a class="dropdown-item" href="{% url 'core:customers_list'%}">Customer List</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Something else here</a>
+              <a class="dropdown-item" href="{%url 'core:dashboard' %}">Dashboard</a>
             </div>
           </div>
         </div>
         <!-- Card Body -->
         <div class="card-body">
           <div class="chart-area">
-            <a href="{% url 'core:contract_new'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary mb-4"><i class="fas fa-user-plus fa-sm text-white-50"></i> Add contract</a>
+            <a href="{% url 'core:contract_new'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary mb-4"><i class="fas fa-user-plus fa-sm text-white-50"></i> New contract</a>
             <div class="table-responsive">
               <table class="table table-bordered table-striped table-dark" id="dataTable" width="100%" cellspacing="0">
                 <thead>
@@ -40,7 +40,8 @@
                     <th>Reference id</th>
                     <th>Status</th>
                     <th>Status date</th>
-                    <th>Link</th>
+                    <th>Schedules</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -48,7 +49,8 @@
                     <th>Reference id</th>
                     <th>Status</th>
                     <th>Status-date</th>
-                    <th>Link</th>
+                    <th>Schedules</th>
+                    <th>Edit</th>
                   </tr>
                 </tfoot>
                 <tbody>
@@ -57,7 +59,8 @@
                       <td>{{ contract.id }}</td>
                       <td>{{ contract.status }}</td>
                       <td>{{ contract.status_date }}</td>
-                      <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="material-icons">see</i></a></td>
+                      <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="material-icons">schedules</i></a></td>
+                      <td><a href="{% url 'core:contract_edit' contract.id %}"><i class="material-icons">edit</i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

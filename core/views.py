@@ -43,6 +43,30 @@ def schedule_detail(request,id):
     steps = Step.objects.filter(schedule=schedule)
     return render(request, 'core/schedule_detail.html', {'schedule': schedule, 'steps': steps})
 
+def customer_edit(request,id):
+    customer = get_object_or_404(Customer, pk=id)
+    if request.method == "POST":
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            contract = form.save(commit=False)
+            contract.save()
+            return redirect('/core/customers')
+    else:
+        form = CustomerForm(instance=customer)
+    return render(request, 'core/customer_edit.html', {'form': form})
+
+def contract_edit(request,id):
+    contract = get_object_or_404(Contract, pk=id)
+    if request.method == "POST":
+        form = ContractForm(request.POST, instance=contract)
+        if form.is_valid():
+            contract = form.save(commit=False)
+            contract.save()
+            return redirect('/core/contracts')
+    else:
+        form = ContractForm(instance=contract)
+    return render(request, 'core/contract_edit.html', {'form': form})
+
 def customer_new(request):
     if request.method == "POST":
         form = CustomerForm(request.POST)

@@ -2,32 +2,54 @@
 
 {% block content %}
 
-<!-- Card Body -->
-<div class="card-body">
-  <div class="chart-area">
-<ul>
-  Customer details
-<li> Reference id: {{ customer.id }}</li>
-<li> City: {{ customer.city }}</li>
-<li> Owner: {{ customer.user }}</li>
-</ul>
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div class="h3 mb-0">Customer detail</div>
   </div>
-</div>
 
+
+<!-- Content Row -->
+<div class="row">
+
+  <div class="col-xl-12 col-lg-12">
+    <div class="card mb-4">
+      <!-- Card Header - Dropdown -->
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-primary">
+        <h6 class="m-0 font-weight-bold">Your customer: # {{ customer.id }}</h6>
+        <div class="dropdown no-arrow">
+          <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+            <div class="dropdown-header">Access:</div>
+            <a class="dropdown-item" href="{% url 'core:customer_new'%}">New customer</a>
+            <a class="dropdown-item" href="{% url 'core:contracts_list'%}">Contract List</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{%url 'core:dashboard' %}">Dashboard</a>
+          </div>
+        </div>
+      </div>
       <!-- Card Body -->
       <div class="card-body">
         <div class="chart-area">
-         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-dark" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th>Contract id</th>
                   <th>Customer</th>
                   <th>Status</th>
-                  <th>Link</th>
+                  <th>schedules</th>
                 </tr>
               </thead>
-
+              <tfoot>
+                <tr>
+                  <th>Contract id</th>
+                  <th>Customer</th>
+                  <th>Status</th>
+                  <th>Schedules</th>
+                </tr>
+              </tfoot>
               <tbody>
                 {% for contract in contracts %}
                   <tr>
@@ -35,13 +57,16 @@
                     <td>{{ contract.customer }}</td>
                     <td>{{ contract.status }}</td>
                     <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="material-icons">see</i></a></td>
-                  </tr>
+                 </tr>
                   {% endfor %}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
         
 {% endblock %}
 

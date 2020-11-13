@@ -24,58 +24,40 @@ theme =  {
 
 led1Layout = html.Div(
     [
-    daq.Indicator(
-        value=True,
-        color=theme['detail'],
-        id='darktheme-daq-indicator1',
-        className='dark-theme-control'
-    ), 
-        html.Br(),
         daq.LEDDisplay(
             id='led1',
             value="0000",
             className='dark-theme-control',
+             color = 'black'
         ),
         html.Br(),
-        html.Div('Deals created', className='h4 mb-0 text-center text-light'),
+        html.Div('Deals created #', className='h4 mb-0 text-center text-light'),
     ],className='mb-4'
 )
 
 led2Layout = html.Div(
     [
-    daq.Indicator(
-        value=False,
-        color=theme['detail'],
-        id='darktheme-daq-indicator2',
-        className='dark-theme-control'
-    ), 
-        html.Br(),
         daq.LEDDisplay(
             id='led2',
             value="0000",
             className='dark-theme-control',
+            color = 'black'
         ),
         html.Br(),
-        html.Div('Deals validated', className='h4 mb-0 text-center text-light'),
+        html.Div('Deals validated #', className='h4 mb-0 text-center text-light'),
     ],className='mb-4'
 )
 
 led3Layout = html.Div(
     [
-    daq.Indicator(
-        value=False,
-        color=theme['detail'],
-        id='darktheme-daq-indicator3',
-        className='dark-theme-control'
-    ), 
-        html.Br(),
         daq.LEDDisplay(
             id='led3',
             value="0000",
             className='dark-theme-control',
+            color = 'black'
         ),
         html.Br(),
-        html.Div('Deals activated', className='h4 mb-0 text-center text-light'),
+        html.Div('Deals activated #', className='h4 mb-0 text-center text-light'),
     ],className='mb-4'
 )
 
@@ -88,10 +70,10 @@ gauge1Layout = html.Div(
             value=0,
             className='dark-theme-control'
         ),
-        html.Br(),
-        html.Div('Validation leadtime', className='h4 mb-0 text-center text-light'),
+        html.Div('Validation leadtime (days #)', className='h4 mb-4 text-center text-light'),
     ]
 )
+
 gauge2Layout = html.Div(
     [
         daq.Gauge(
@@ -101,10 +83,10 @@ gauge2Layout = html.Div(
             value=0,
             className='dark-theme-control'
         ),
-        html.Br(),
-        html.Div('Activation leadtime', className='h4 mb-0 text-center text-light'),
+        html.Div('Activation leadtime (days #)', className='h4 mb-0 text-center text-light'),
     ]
 )
+
 graduate1Layout = html.Div(
     [
         daq.GraduatedBar(
@@ -116,6 +98,7 @@ graduate1Layout = html.Div(
         html.Div('Activation %', className='h4 mb-4 text-center text-light'),
     ]
 )
+
 graduate2Layout = html.Div(
     [
         daq.GraduatedBar(
@@ -129,7 +112,6 @@ graduate2Layout = html.Div(
 )
 
 
-
 app = DjangoDash("DashboardApp")
 
 app.layout = html.Div(
@@ -137,7 +119,7 @@ app.layout = html.Div(
 
         html.Div(id="output-one", className='d-sm-flex align-items-center justify-content-between mb-4',
             children=[
-                html.Div('', className='h3 mb-0'),
+                html.Div('Your dashboard', className='h3 mb-0'),
                 daq.PowerButton(
                     on=False,
                     color=theme['detail'],
@@ -155,7 +137,7 @@ app.layout = html.Div(
             ],
             id='dark-theme-components',
             className = 'd-flex justify-content-around',
-            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
+            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '20px', 'margin-top': '20px'}          
         ),
  
         dbc.Row(
@@ -165,7 +147,7 @@ app.layout = html.Div(
             ],
             id='gauge',
             className = 'd-flex justify-content-around mb-4 ',
-            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
+            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '20px', 'margin-top': '20px'}          
         ),
 
         dbc.Row(
@@ -175,7 +157,7 @@ app.layout = html.Div(
             ],
             id='gauge',
             className = 'd-flex justify-content-around mb-4 ',
-            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '50px', 'margin-top': '20px'}          
+            style={'border': 'solid 1px #A2B1C6', 'border-radius': '5px', 'padding': '20px', 'margin-top': '20px'}          
         ),
 
         dbc.Row(
@@ -307,7 +289,16 @@ def update_led_format(on, **kwargs):
 def update_gauge(on, **kwargs):
     val = 0
     if on==True:
-        val = 6
+        user = kwargs['user']
+        val = 0
+        status = 'Validated'
+        contract_list = Contract.objects.filter(user=user, status=status)
+        contract_count = Contract.objects.filter(user=user, status=status).count()
+        for contract in contract_list:
+            delta = contract.validation_date - contract.creation_date
+            delta = delta.days
+            val = val + delta
+        val = val / contract_count
     return val
 
 # Mise à jour de la jauge activation leadtime
@@ -318,7 +309,16 @@ def update_gauge(on, **kwargs):
 def update_gauge(on, **kwargs):
     val = 0
     if on==True:
-        val = 3
+        user = kwargs['user']
+        val = 0
+        status = 'Activated'
+        contract_list = Contract.objects.filter(user=user, status=status)
+        contract_count = Contract.objects.filter(user=user, status=status).count()
+        for contract in contract_list:
+            delta = contract.activation_date - contract.validation_date
+            delta = delta.days
+            val = val + delta
+        val = val / contract_count
     return val
 
 # Mise à jour du format de la jauge validation leadtime
@@ -351,7 +351,12 @@ def update_gauge_format(on, **kwargs):
 def update_graduate(on, **kwargs):
     val = 0
     if on==True:
-        val = 8
+        user = kwargs['user']
+        status = 'Activated'
+        activated = Contract.objects.filter(user=user, status=status).count()
+        allcontracts = Contract.objects.filter(user=user).count()
+        val = activated / allcontracts
+        val = int (val*10)
     return val
 
 # Mise à jour de la graduation cancellation
@@ -362,7 +367,12 @@ def update_graduate(on, **kwargs):
 def update_graduate(on, **kwargs):
     val = 0
     if on==True:
-        val = 1
+        user = kwargs['user']
+        status = 'Cancelled'
+        cancelled = Contract.objects.filter(user=user, status=status).count()
+        allcontracts = Contract.objects.filter(user=user).count()
+        val = cancelled / allcontracts
+        val = int (val*10)
     return val
     
 # Mise à jour du format de la graduation activation
