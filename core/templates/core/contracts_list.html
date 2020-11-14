@@ -34,19 +34,21 @@
           <div class="chart-area">
             <a href="{% url 'core:contract_new'%}" class="d-none d-sm-inline-block btn btn-sm btn-primary mb-4"><i class="fas fa-user-plus fa-sm text-white-50"></i> New contract</a>
             <div class="table-responsive">
-              <table class="table table-bordered table-striped table-dark" id="dataTable" width="100%" cellspacing="0">
-                <thead>
+              <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead class='bg-secondary'>
                   <tr>
-                    <th>Reference id</th>
+                    <th>Reference #</th>
+                    <th>Customer id</th>
                     <th>Status</th>
                     <th>Status date</th>
                     <th>Schedules</th>
                     <th>Edit</th>
                   </tr>
                 </thead>
-                <tfoot>
+                <tfoot class='bg-secondary'>
                   <tr>
-                    <th>Reference id</th>
+                    <th>Reference #</th>
+                    <th>Customer id</th>
                     <th>Status</th>
                     <th>Status-date</th>
                     <th>Schedules</th>
@@ -56,11 +58,15 @@
                 <tbody>
                   {% for contract in contracts %}
                     <tr>
+                  {% if contract.status == 'Cancelled' %}
+                    <tr class="table-warning">
+                  {% endif %}
                       <td>{{ contract.id }}</td>
+                      <td>{{ contract.customer }}</td>
                       <td>{{ contract.status }}</td>
                       <td>{{ contract.status_date }}</td>
-                      <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="material-icons">schedules</i></a></td>
-                      <td><a href="{% url 'core:contract_edit' contract.id %}"><i class="material-icons">edit</i></a></td>
+                      <td><a href="{% url 'core:contract_detail' contract.id %}"><i class="fa fa-calendar"></i></a></td>
+                      <td><a href="{% url 'core:contract_edit' contract.id %}"><i class="fa fa-edit"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

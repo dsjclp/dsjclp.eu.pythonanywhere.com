@@ -30,7 +30,7 @@
                     <td>{{ schedule.id }}</td>
                     <td>€ {{ schedule.amount|floatformat}}</td>
                     <td>€ {{ schedule.rv|floatformat }}</td>
-                    <td><a href="{% url 'core:schedule_detail' schedule.id %}"><i class="material-icons">see</i></a></td>
+                    <td><a href="{% url 'core:schedule_detail' schedule.id %}"></a></td><i class="fa fa-calendar"></i>
                   </tr>
                   {% endfor %}
               </tbody>

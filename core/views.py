@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from .models import Schedule
 from .models import Step
+import datetime
 
 class Dashboard(generic.TemplateView):
     template_name = "core/dashboard.html"
@@ -82,6 +83,10 @@ def customer_new(request):
 def contract_new(request):
     if request.method == "POST":
         form = ContractForm(request.POST)
+        form.instance.user = request.user
+        form.instance.status = 'Created'
+        form.instance.creation_date = datetime.date.today()
+        form.instance.status_date = datetime.date.today()
         if form.is_valid():
             contract = form.save(commit=False)
             contract.save()
