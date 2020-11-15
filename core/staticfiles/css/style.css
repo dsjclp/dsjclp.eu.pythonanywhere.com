@@ -1,8 +1,12 @@
 .bg-body {
 	background-color: #222; 
   }
- 
-  .rc-slider-rail {
+
+a {
+	color: white;
+  }
+
+.rc-slider-rail {
 	background-color: #adb5bd;
 }
 

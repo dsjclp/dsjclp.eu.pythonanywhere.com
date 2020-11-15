@@ -679,12 +679,30 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         contract = Contract()
         contract.customer = customer
         contract.user = user
+        contract.status = 'Created'
+        contract.creation_date = datetime.date.today()
+        contract.status_date = datetime.date.today()
         contract.save()
+
+        val = 0
+        k = 0
+        rate = rateValue/120000
+        if modeValue=='01':
+            for scheduleRow in scheduleRows:
+                val = val + (float(scheduleRow['rent'] / pow((1+rate),k)))
+                k=k+1
+            val = val + rvValue / pow((1+rate),k)
+        else :
+            for scheduleRow in scheduleRows:
+                val = val + (float(scheduleRow['rent'] / pow((1+rate),k+1)))
+                k=k+1
+            val = val + rvValue / pow((1+rate),k)
+
         schedule = Schedule()
         schedule.contract = contract
         schedule.mode = modeValue
         schedule.rv = rvValue
-        schedule.amount = amountValue
+        schedule.amount = val
         schedule.start_date = startdate
         schedule.rate = rateValue/120000
         schedule.save()

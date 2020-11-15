@@ -7,9 +7,13 @@
   </div>
 
   {% if user.is_authenticated %}
+
+
+{%load plotly_dash%}
+{%plotly_direct name="MapApp"%}
   
   <!-- Content Row -->
-  <div class="row">
+  <div class="row mt-4">
 
     <div class="col-xl-12 col-lg-12">
       <div class="card mb-4">
@@ -37,7 +41,7 @@
               <table class="table table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
                 <thead class='bg-secondary'>
                   <tr>
-                    <th>Reference id</th>
+                    <th>#</t.h>
                     <th>City</th>
                     <th>Contracts</th>
                     <th>Edit</th>
@@ -45,7 +49,7 @@
                 </thead>
                 <tfoot class='bg-secondary'>
                   <tr>
-                    <th>Reference id</th>
+                    <th>#</th>
                     <th>City</th>
                     <th>Contracts</th>
                     <th>Edit</th>

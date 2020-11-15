@@ -637,6 +637,9 @@ def callback_c(n, durationValue, amountValue, rvValue, scheduleRows, modeValue, 
         contract = Contract()
         contract.customer = customer
         contract.user = user
+        contract.status = 'Created'
+        contract.creation_date = datetime.date.today()
+        contract.status_date = datetime.date.today()
         contract.save()
         schedule = Schedule()
         schedule.contract = contract

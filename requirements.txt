@@ -5,3 +5,5 @@ dpd-static-support
 pandas
 dash-bootstrap-components
 whitenoise
+dash_daq
+dash-leaflet

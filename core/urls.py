@@ -8,8 +8,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
 
-# Load demo plotly apps - this triggers their registration
+# Load plotly apps - this triggers their registration
 import core.dash_dashboard
+import core.dash_map
 
 app_name = 'core'
 
